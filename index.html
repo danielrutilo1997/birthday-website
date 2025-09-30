@@ -134,7 +134,7 @@
         .confetti:nth-child(10) { left: 70%; animation-delay: 1.2s; background: #764ba2; }
 
         .cake {
-            font-size: 3.5em;
+            font-size: 3.0em;
             margin: 20px 0;
             animation: spin 3s ease-in-out infinite;
         }
@@ -176,6 +176,54 @@
                 transform: translateY(-15px) rotate(3deg);
             }
         }
+        .countdown-container {
+            margin: 30px 0;
+        }
+
+        .countdown-container h2 {
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .time-block {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 80px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .time {
+            display: block;
+            font-size: 2.5em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .label {
+            display: block;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -191,8 +239,29 @@
     <div class="confetti"></div>
 
     <div class="container">
-        <h1>🎉 Happy Birthday mailob! 🎉
+        <h1>
         <div class="cake">🎂</div>
+        <div class="countdown-container">
+            <h2>Time until Casandra's special day!</h2>
+            <div class="countdown" id="countdown">
+                <div class="time-block">
+                    <span class="time" id="days">00</span>
+                    <span class="label">Days</span>
+                </div>
+                <div class="time-block">
+                    <span class="time" id="hours">00</span>
+                    <span class="label">Hours</span>
+                </div>
+                <div class="time-block">
+                    <span class="time" id="minutes">00</span>
+                    <span class="label">Minutes</span>
+                </div>
+                <div class="time-block">
+                    <span class="time" id="seconds">00</span>
+                    <span class="label">Seconds</span>
+                </div>
+            </div>
+        </div>
         <div class="message">
             On this day, a wonderful person was born. I hope this year brings you everything you've ever wanted because you deserve it. I hope to make so many more wonderful memories with you mailob!
         </div>
@@ -200,5 +269,39 @@
             <img src="husky.jpg" alt="White Husky with Heart">
         </div>
     </div>
+    <script>
+        function updateCountdown() {
+            // Set the target date - October 1st, 2025 at 12:00 AM
+            //const targetDate = new Date('October 1, 2025 00:00:00').getTime();
+            const targetDate = new Date('September 30, 2025 11:42:00').getTime();
+            // Get current time
+            const now = new Date().getTime();
+            
+            // Calculate difference
+            const difference = targetDate - now;
+            
+            // If countdown is finished
+            if (difference < 0) {
+                document.getElementById('countdown').innerHTML = '<h2 style="color: #667eea; font-size: 2em;">🎉 Happy Birthday mailob! 🎉</h2>';
+                return;
+            }
+            
+            // Calculate time units
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            
+            // Display the countdown
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        
+        // Update countdown every second
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
 </body>
 </html>
