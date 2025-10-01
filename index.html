@@ -23,11 +23,43 @@
         .container {
             text-align: center;
             padding: 40px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            background: white;
+            border-radius: 30px;
+            border: 5px solid transparent;
+            background-clip: padding-box;
             max-width: 600px;
             animation: fadeInScale 1s ease-out;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 30px;
+            padding: 5px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #ffe66d, #a8e6cf, #667eea, #ff6b6b);
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            inset: -10px;
+            border-radius: 35px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(255, 107, 107, 0.3),
+                0 0 40px rgba(78, 205, 196, 0.2);
+            z-index: -1;
+            pointer-events: none;
         }
 
         @keyframes fadeInScale {
@@ -43,9 +75,12 @@
 
         h1 {
             font-size: 3.5em;
+            font-family: 'Comic Sans MS', 'Marker Felt', 'Chalkboard', fantasy;
             color: #5856bd;
             margin-bottom: 20px;
             animation: bounce 2s infinite;
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes bounce {
@@ -62,10 +97,31 @@
 
         .message {
             font-size: 2.0em;
-            color: #333;
+            font-family: 'Comic Sans MS', 'Brush Script MT', cursive;
+            color: #c91515;
             line-height: 1.6;
             margin: 30px 0;
-            display: none; 
+            display: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        .message.show {
+            animation: slideInBounce 1.5s ease-out;
+        }
+
+        @keyframes slideInBounce {
+            0% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.8);
+            }
+            60% {
+                opacity: 1;
+                transform: translateY(10px) scale(1.05);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
         }
 
         .balloon {
@@ -74,6 +130,18 @@
             height: 70px;
             border-radius: 50%;
             animation: float 6s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .balloon::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.3);
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         @keyframes float {
@@ -101,7 +169,7 @@
 
         .balloon:nth-child(3) {
             background: #ffe66d;
-            left: 15%;
+            left: 10%;
             top: 70%;
             animation-delay: 2s;
         }
@@ -119,6 +187,7 @@
             height: 10px;
             background: #ff6b6b;
             animation: fall 4s linear infinite;
+            z-index: 0;
         }
 
         @keyframes fall {
@@ -135,9 +204,11 @@
         .confetti:nth-child(10) { left: 70%; animation-delay: 1.2s; background: #764ba2; }
 
         .cake {
-            font-size: 3.0em;
+            font-size: 6.0em;
             margin: 20px 0;
             animation: spin 3s ease-in-out infinite;
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes spin {
@@ -159,6 +230,7 @@
             margin: 30px auto;
             animation: bounce-husky 2s ease-in-out infinite;
             display: none;
+            z-index: 2;
         }
 
         .husky img {
@@ -180,6 +252,8 @@
         }
         .countdown-container {
             margin: 30px 0;
+            position: relative;
+            z-index: 2;
         }
 
         .countdown-container h2 {
@@ -196,20 +270,42 @@
         }
 
         .time-block {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
             border-radius: 10px;
             min-width: 80px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            animation: pulse 2s ease-in-out infinite;
+            animation: partyPulse 1s ease-in-out infinite;
         }
 
-        @keyframes pulse {
+        .time-block:nth-child(1) {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            animation-delay: 0s;
+        }
+
+        .time-block:nth-child(2) {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            animation-delay: 0.2s;
+        }
+
+        .time-block:nth-child(3) {
+            background: linear-gradient(135deg, #ffe66d 0%, #ffd93d 100%);
+            animation-delay: 0.4s;
+        }
+
+        .time-block:nth-child(4) {
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8b0 100%);
+            animation-delay: 0.6s;
+        }
+
+        @keyframes partyPulse {
             0%, 100% {
-                transform: scale(1);
+                transform: scale(1) rotate(0deg);
             }
-            50% {
-                transform: scale(1.05);
+            25% {
+                transform: scale(1.1) rotate(-3deg);
+            }
+            75% {
+                transform: scale(1.1) rotate(3deg);
             }
         }
 
@@ -265,17 +361,17 @@
             </div>
         </div>
         <div class="message">
-            On this day, a wonderful person was born. I hope this year brings you everything you've ever wanted because you deserve it. I hope to make so many more wonderful memories with you mailob!
+            On this day, an amazing, beautiful and wonderful person was born. I hope this year brings you everything you've ever wanted because you deserve it. Here's to making so many more wonderful memories with you mailob! I love you!
         </div>
         <div class="husky">
-            <img src="husky.jpg" alt="White Husky with Heart">
+            <img src="husky-removebg-preview.png" alt="White Husky with Heart">
         </div>
     </div>
     <script>
         function updateCountdown() {
             // Set the target date - October 1st, 2025 at 12:00 AM
             //const targetDate = new Date('October 1, 2025 00:00:00').getTime();
-            const targetDate = new Date('September 30, 2025 13:12:00').getTime();
+            const targetDate = new Date('September 30, 2025 18:48:00').getTime();
             // Get current time
             const now = new Date().getTime();
             
@@ -286,7 +382,9 @@
             if (difference < 0) {
                 document.getElementById('title').textContent = 'Happy Birthday mailob!';
                 document.querySelector('.countdown-container').style.display = 'none';
-                document.querySelector('.message').style.display = 'block';
+                const message = document.querySelector('.message');
+                message.style.display = 'block';
+                message.classList.add('show');
                 document.querySelector('.husky').style.display = 'block';
                 return;
             }
