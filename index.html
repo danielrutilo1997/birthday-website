@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Birthday!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -22,15 +25,24 @@
 
         .container {
             text-align: center;
-            padding: 40px;
+            padding: 30px 20px;
             background: white;
             border-radius: 30px;
             border: 5px solid transparent;
             background-clip: padding-box;
-            max-width: 600px;
+            max-width: 90%;
+            width: 100%;
+            margin: 20px auto;
             animation: fadeInScale 1s ease-out;
             position: relative;
             z-index: 1;
+        }
+
+        @media (min-width: 600px) {
+            .container {
+                max-width: 600px;
+                padding: 40px;
+            }
         }
 
         .container::before {
@@ -75,7 +87,7 @@
 
         h1 {
             font-size: 3.5em;
-            font-family: 'Comic Sans MS', 'Marker Felt', 'Chalkboard', fantasy;
+            font-family: 'Pacifico', 'Comic Sans MS', 'Marker Felt', cursive;
             color: #5856bd;
             margin-bottom: 20px;
             animation: bounce 2s infinite;
@@ -97,7 +109,7 @@
 
         .message {
             font-size: 2.0em;
-            font-family: 'Comic Sans MS', 'Brush Script MT', cursive;
+            font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
             color: #c91515;
             line-height: 1.6;
             margin: 30px 0;
@@ -155,29 +167,31 @@
 
         .balloon:nth-child(1) {
             background: #ff6b6b;
-            left: 10%;
-            top: 20%;
+            left: 5%;
+            top: 15%;
             animation-delay: 0s;
         }
 
         .balloon:nth-child(2) {
             background: #4ecdc4;
-            left: 85%;
-            top: 30%;
+            right: 5%;
+            left: auto;
+            top: 25%;
             animation-delay: 1s;
         }
 
         .balloon:nth-child(3) {
             background: #ffe66d;
-            left: 10%;
-            top: 70%;
+            left: 8%;
+            top: 65%;
             animation-delay: 2s;
         }
 
         .balloon:nth-child(4) {
             background: #a8e6cf;
-            left: 80%;
-            top: 60%;
+            right: 8%;
+            left: auto;
+            top: 55%;
             animation-delay: 1.5s;
         }
 
