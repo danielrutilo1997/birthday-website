@@ -243,23 +243,77 @@
         .confetti:nth-child(9) { left: 30%; animation-delay: 0.8s; background: #667eea; }
         .confetti:nth-child(10) { left: 70%; animation-delay: 1.2s; background: #764ba2; }
 
-        .cake {
-            font-size: 6.0em;
-            margin: 20px 0;
-            animation: spin 3s ease-in-out infinite;
-            position: relative;
+        .flower-img {
+            width: 100px;
+            height: auto;
+            position: absolute;
+            animation: flowerPulse 4s ease-in-out infinite;
             z-index: 2;
         }
 
-        @keyframes spin {
-            0%, 100% {
-                transform: rotate(0deg);
+        .flower-center {
+            position: relative;
+            width: 120px;
+            margin: 20px auto;
+            display: block;
+            animation-duration: 4s;
+        }
+
+        .flower-top-left {
+            top: 10px;
+            left: 10px;
+            width: 70px;
+            animation-duration: 5s;
+        }
+
+        .flower-top-right {
+            top: 10px;
+            right: 10px;
+            width: 70px;
+            animation-duration: 3.5s;
+        }
+
+        .flower-bottom-left {
+            bottom: 10px;
+            left: 10px;
+            width: 70px;
+            animation-duration: 4.5s;
+        }
+
+        .flower-bottom-right {
+            bottom: 10px;
+            right: 10px;
+            width: 70px;
+            animation-duration: 3s;
+        }
+
+        @keyframes flowerPulse {
+            0% {
+                transform: scale(1) rotate(0deg);
             }
             25% {
-                transform: rotate(-10deg);
+                transform: scale(1.1) rotate(90deg);
+            }
+            50% {
+                transform: scale(1) rotate(180deg);
             }
             75% {
-                transform: rotate(10deg);
+                transform: scale(1.1) rotate(270deg);
+            }
+            100% {
+                transform: scale(1) rotate(360deg);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .flower-center {
+                width: 80px;
+            }
+            .flower-top-left,
+            .flower-top-right,
+            .flower-bottom-left,
+            .flower-bottom-right {
+                width: 50px;
             }
         }
 
@@ -380,7 +434,11 @@
 
     <div class="container">
         <h1 id="title"></h1>
-        <div class="cake">🎂</div>
+        <img src="flower.png" class="flower-img flower-center" alt="Flower">
+        <img src="flower.png" class="flower-img flower-top-left" alt="Flower">
+        <img src="flower.png" class="flower-img flower-top-right" alt="Flower">
+        <img src="flower.png" class="flower-img flower-bottom-left" alt="Flower">
+        <img src="flower.png" class="flower-img flower-bottom-right" alt="Flower">
         <div class="countdown-container">
             <h2>Time until Casandra's special day!</h2>
             <div class="countdown" id="countdown">
@@ -412,8 +470,8 @@
     <script>
         function updateCountdown() {
             // Set the target date - October 1st, 2025 at 12:00 AM
-            //const targetDate = new Date('October 1, 2025 00:00:00').getTime();
-            const targetDate = new Date('September 30, 2025 20:13:00').getTime();
+            const targetDate = new Date('October 1, 2025 00:00:00').getTime();
+            //const targetDate = new Date('September 30, 2025 20:16:00').getTime();
             // Get current time
             const now = new Date().getTime();
             
