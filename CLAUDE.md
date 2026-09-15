@@ -153,3 +153,14 @@ Do last so it's polishing real content rather than placeholders.
 `git remote -v` currently has a GitHub personal access token embedded in the
 origin URL. Rotate the token and reset the remote to the plain
 `https://github.com/...` URL using a credential manager instead.
+
+## Where we left off (2026-09-14)
+
+Plan above was just written; no sprint work has started yet — repo is still
+in its baseline state (single `index.html`, no `content.js`, no `assets/`
+folder). Daniel is gathering personal content (photos, letter text, daily
+messages, song choice) separately and will drop it into `content.js` once
+Sprint 0 creates it.
+
+Next session: start Sprint 0 (file split + `content.js` scaffold with
+placeholder content) unless priorities have changed.
