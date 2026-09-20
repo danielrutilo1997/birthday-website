@@ -35,18 +35,20 @@ lower-risk to cut or simplify if time runs short than earlier ones.
 Refactor before adding features, so later sprints aren't all crammed into one
 HTML file.
 
-- [ ] Split `index.html` into `index.html` (structure only), `style.css`,
+- [x] Split `index.html` into `index.html` (structure only), `style.css`,
       `script.js`.
-- [ ] Create `content.js` (plain JS object/array, loaded via `<script>` tag —
+- [x] Create `content.js` (plain JS object/array, loaded via `<script>` tag —
       no build step, so keep it simple, e.g. `const CONTENT = {...}`) as the
       single place for user-supplied personal content across all features.
       Seed it with clearly-marked placeholder entries.
-- [ ] Add an `assets/` folder (`assets/images/`, `assets/audio/`) and move
+- [x] Add an `assets/` folder (`assets/images/`, `assets/audio/`) and move
       existing images in; update references.
-- [ ] Add `prefers-reduced-motion` handling as a baseline (disable/simplify
+- [x] Add `prefers-reduced-motion` handling as a baseline (disable/simplify
       the heavier animations for users who request it) — do this now so
       every animation added later inherits it.
-- [ ] Compress `lily.gif` and other large images.
+- [ ] Compress `lily.gif` and other large images. (NOTE: `lily.gif`,
+      `husky.jpg` and the sakura jpg are not referenced by the site at all —
+      nothing to compress until one is actually used. Moved to `assets/images/`.)
 
 Done when: site looks/behaves identically to today, just reorganized, and
 `content.js` exists with placeholder shapes for the sprints below.
@@ -154,13 +156,35 @@ Do last so it's polishing real content rather than placeholders.
 origin URL. Rotate the token and reset the remote to the plain
 `https://github.com/...` URL using a credential manager instead.
 
-## Where we left off (2026-09-14)
+## Where we left off (2026-09-19)
 
-Plan above was just written; no sprint work has started yet — repo is still
-in its baseline state (single `index.html`, no `content.js`, no `assets/`
-folder). Daniel is gathering personal content (photos, letter text, daily
-messages, song choice) separately and will drop it into `content.js` once
-Sprint 0 creates it.
+Sprint 0 is done, on branch `develop`. The site is now:
 
-Next session: start Sprint 0 (file split + `content.js` scaffold with
-placeholder content) unless priorities have changed.
+- `index.html` — structure only, no inline CSS/JS, no personal text.
+- `style.css` — the original stylesheet moved verbatim (byte-identical,
+  verified by diff), plus a `prefers-reduced-motion` block at the end.
+- `script.js` — countdown + reveal logic, reads everything from `CONTENT`.
+- `content.js` — `const CONTENT = {...}`, the only file Daniel edits.
+  Already has placeholder shapes for `dailyReveals`, `memories` and
+  `balloonMessages`, so Sprints 1-3 have somewhere to plug in.
+- `assets/images/` — all five images moved there via `git mv`.
+
+Behaviour is unchanged from the old single-file version. Both states were
+smoke-tested (countdown-running and countdown-finished) and match.
+
+Known bug found during the split, NOT fixed (left alone so Sprint 0 stays a
+pure refactor): the `.confetti:nth-child(N)` rules in `style.css` are off by
+two. The six balloons are body children 1-6 and the six confetti are 7-12,
+but the rules target `nth-child(5)`-`(10)`. Net effect: rules 5 and 6 match
+nothing, confetti 5 and 6 get no `left`/`animation-delay` and stack in the
+same spot. Fix in Sprint 4 polish (or sooner) by retargeting to
+`nth-child(7)`-`(12)`.
+
+TIMELINE NOTE: only 12 days to ship, and the Sprint 1 placeholder dates start
+2026-09-20. The daily-reveal feature loses a day of value for every day it
+slips, so it is the next thing to build — but it needs Daniel's real daily
+messages to be worth shipping. If those aren't written, skip Sprint 1 and go
+to Sprint 2/3, which are date-independent.
+
+Next session: Sprint 1 (daily reveal), pending Daniel's call on whether the
+daily messages exist yet.
