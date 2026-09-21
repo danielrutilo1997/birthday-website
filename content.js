@@ -19,7 +19,7 @@ const CONTENT = {
        --------------------------------------------------------------- */
 
     // Parsed with new Date(). Keep this exact format.
-    targetDate: 'October 1, 2026 00:00:00',
+    targetDate: 'September 20, 2026 17:54:00',
 
     // Heading above the countdown clock.
     countdownHeading: "Time until Casandra's special day!",
@@ -34,6 +34,9 @@ const CONTENT = {
 
     // The big reveal message. Shown when the countdown hits zero.
     birthdayMessage: "On this day, an amazing, beautiful and wonderful girl was born. I hope this year brings you everything you've ever wanted because you deserve it. Here's to making so many more wonderful memories with you Casandra! I love you!",
+    /* Another year goes by, another wonderful year I got to spend with you. */
+    // Heading above the memory gallery (Sprint 2).
+    galleryHeading: 'Us, so far',
 
     huskyImage: 'assets/images/husky-removebg-preview.png',
     huskyAlt: 'White Husky with Heart',
@@ -47,22 +50,13 @@ const CONTENT = {
        --------------------------------------------------------------- */
 
     dailyReveals: [
-        // PLACEHOLDER — delete these three and write your own.
-        {
-            date: '2026-09-20',
-            message: 'PLACEHOLDER — first daily note goes here.',
-            photo: null
-        },
-        {
-            date: '2026-09-21',
-            message: 'PLACEHOLDER — second daily note. This one has a photo.',
-            photo: 'assets/images/husky.jpg'
-        },
-        {
-            date: '2026-09-22',
-            message: 'PLACEHOLDER — third daily note.',
-            photo: null
-        }
+        // PLACEHOLDER — Daniel wants these to start 2026-09-27.
+        // Delete these and write one entry per day. Sprint 1 is not built
+        // yet, so nothing reads this array on the site today.
+        { date: '2026-09-27', message: 'PLACEHOLDER — day one.', photo: null },
+        { date: '2026-09-28', message: 'PLACEHOLDER — day two.', photo: null },
+        { date: '2026-09-29', message: 'PLACEHOLDER — day three.', photo: null },
+        { date: '2026-09-30', message: 'PLACEHOLDER — day four.', photo: null }
     ],
 
     /* ---------------------------------------------------------------
@@ -72,11 +66,40 @@ const CONTENT = {
        --------------------------------------------------------------- */
 
     memories: [
-        // PLACEHOLDER
+        // Sprint 2 reads this array. Add an entry and it appears in the
+        // gallery — no other file needs touching.
+        //
+        //   photo   (required) path relative to index.html
+        //   caption (required) shown under the card and in the lightbox
+        //   date    (optional) 'YYYY-MM-DD', used only for ordering;
+        //                      undated entries sort to the end
+        //
+        // These five are PLACEHOLDERS pointing at images already in the
+        // repo, so you can see the layout. Replace them.
         {
             photo: 'assets/images/husky.jpg',
-            caption: 'PLACEHOLDER — caption for this photo.',
+            caption: 'PLACEHOLDER — the day we met this goofball.',
+            date: '2024-06-12'
+        },
+        {
+            photo: 'assets/images/japan-sakura-flower_24877-82387.jpg',
+            caption: 'PLACEHOLDER — sakura season.',
+            date: '2024-11-03'
+        },
+        {
+            photo: 'assets/images/flower.png',
+            caption: 'PLACEHOLDER — a caption long enough to show how wrapping behaves on a narrow phone screen.',
             date: '2025-03-01'
+        },
+        {
+            photo: 'assets/images/lily.gif',
+            caption: 'PLACEHOLDER — this one has no date, so it sorts last.',
+            date: null
+        },
+        {
+            photo: 'assets/images/husky-removebg-preview.png',
+            caption: 'PLACEHOLDER — five cards is enough to test horizontal scrolling.',
+            date: '2025-08-20'
         }
     ],
 

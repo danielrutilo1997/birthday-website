@@ -59,6 +59,23 @@
         </div>
     </div>
 
+    <!-- Memory gallery (Sprint 2). Cards are built by script.js from
+         CONTENT.memories; the section stays hidden if that array is empty. -->
+    <section class="gallery" id="gallery" hidden>
+        <h2 class="gallery-heading" id="gallery-heading"></h2>
+        <div class="gallery-scroll" id="gallery-scroll"></div>
+        <p class="gallery-hint" id="gallery-hint">swipe to see more &rarr;</p>
+    </section>
+
+    <!-- Lightbox. Single reusable instance; contents swapped on open. -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" hidden>
+        <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close photo">&times;</button>
+        <figure class="lightbox-figure">
+            <img class="lightbox-img" id="lightbox-img" src="" alt="">
+            <figcaption class="lightbox-caption" id="lightbox-caption"></figcaption>
+        </figure>
+    </div>
+
     <script src="content.js"></script>
     <script src="script.js"></script>
 </body>

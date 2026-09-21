@@ -84,15 +84,15 @@ appears on the site automatically on/after that date, with zero code changes.
 
 A scrollable collection of photos together with captions.
 
-- [ ] Data shape in `content.js`:
+- [x] Data shape in `content.js`:
   ```js
   memories: [
     { photo: 'assets/images/...', caption: '...', date: '2025-03-01' }, // date optional, for sorting
   ]
   ```
-- [ ] UI: horizontal-scroll or grid of cards, click/tap to open a lightbox
+- [x] UI: horizontal-scroll or grid of cards, click/tap to open a lightbox
       (full-size photo + caption, close on backdrop click or Esc).
-- [ ] Lazy-load images (`loading="lazy"`) since this section can grow large
+- [x] Lazy-load images (`loading="lazy"`) since this section can grow large
       over time.
 - [ ] Mobile-first: verify swipe/scroll works well on a phone (this has bit
       the project before — see the balloon-fix commit history).
@@ -156,35 +156,50 @@ Do last so it's polishing real content rather than placeholders.
 origin URL. Rotate the token and reset the remote to the plain
 `https://github.com/...` URL using a credential manager instead.
 
-## Where we left off (2026-09-19)
+## Where we left off (2026-09-20)
 
-Sprint 0 is done, on branch `develop`. The site is now:
+Sprint 0 and Sprint 2 are done on `develop`. Sprint 1 is deliberately SKIPPED
+for now — Daniel has no daily messages written yet but wants them to start
+appearing on 2026-09-27, so the `dailyReveals` placeholders in `content.js`
+are dated 09-27 through 09-30 and nothing on the site reads them yet.
 
-- `index.html` — structure only, no inline CSS/JS, no personal text.
-- `style.css` — the original stylesheet moved verbatim (byte-identical,
-  verified by diff), plus a `prefers-reduced-motion` block at the end.
-- `script.js` — countdown + reveal logic, reads everything from `CONTENT`.
-- `content.js` — `const CONTENT = {...}`, the only file Daniel edits.
-  Already has placeholder shapes for `dailyReveals`, `memories` and
-  `balloonMessages`, so Sprints 1-3 have somewhere to plug in.
-- `assets/images/` — all five images moved there via `git mv`.
+Sprint 2 (memory gallery) as built:
 
-Behaviour is unchanged from the old single-file version. Both states were
-smoke-tested (countdown-running and countdown-finished) and match.
+- `CONTENT.memories` drives everything. Adding `{ photo, caption, date }` is
+  the only step to add a card; `date` is optional and only orders the list.
+- Order is oldest-first (a timeline); undated entries sort to the end.
+- Horizontal scroll-snap strip of cards; each card is a `<button>`, so it is
+  keyboard reachable and works with Enter/Space.
+- Lightbox closes on backdrop click, the close button, or Escape, locks body
+  scroll while open, and returns focus to the card that opened it.
+- Images are `loading="lazy"` + `decoding="async"`.
+- Empty `memories` array hides the whole section.
+- A photo path that fails to load flags the card `is-broken` and shows
+  "photo not found", so a typo in `content.js` is visible rather than silent.
+- `CONTENT.galleryHeading` holds the section title.
 
-Known bug found during the split, NOT fixed (left alone so Sprint 0 stays a
-pure refactor): the `.confetti:nth-child(N)` rules in `style.css` are off by
-two. The six balloons are body children 1-6 and the six confetti are 7-12,
-but the rules target `nth-child(5)`-`(10)`. Net effect: rules 5 and 6 match
-nothing, confetti 5 and 6 get no `left`/`animation-delay` and stack in the
-same spot. Fix in Sprint 4 polish (or sooner) by retargeting to
-`nth-child(7)`-`(12)`.
+26 logic checks pass (rendering, ordering, empty case, lightbox open/close,
+Esc, backdrop, focus return, broken paths).
 
-TIMELINE NOTE: only 12 days to ship, and the Sprint 1 placeholder dates start
-2026-09-20. The daily-reveal feature loses a day of value for every day it
-slips, so it is the next thing to build — but it needs Daniel's real daily
-messages to be worth shipping. If those aren't written, skip Sprint 1 and go
-to Sprint 2/3, which are date-independent.
+STILL UNVERIFIED — the mobile check in the Sprint 2 list is NOT ticked. There
+was no browser automation available this session, so the gallery has only
+been verified by logic tests and static analysis, never actually looked at.
+Someone needs to open it on a real phone-sized viewport and confirm the
+horizontal swipe feels right and the lightbox is usable.
 
-Next session: Sprint 1 (daily reveal), pending Daniel's call on whether the
-daily messages exist yet.
+Two layout changes worth knowing about:
+
+- `body` is now `flex-direction: column`. It had to be: the gallery is a
+  second in-flow child and would otherwise sit beside the card rather than
+  under it. With a single child the rendering is equivalent.
+- The page is now taller, which may change where the two `top: 130%` balloons
+  land relative to the fold once the countdown finishes. Balloons only show
+  in the celebration state, so this needs a look in that state specifically.
+
+Still open from Sprint 0: the `.confetti:nth-child(N)` off-by-two bug
+described above is unfixed, and `CONTENT.targetDate` is currently set to a
+past date ('September 20, 2026 17:54:00') from local testing — it MUST go
+back to 'October 1, 2026 00:00:00' before this ships.
+
+Next session: Sprint 3 (poppable balloons + confetti cannon button), or
+Sprint 1 once the daily messages exist.
