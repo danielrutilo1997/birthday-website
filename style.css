@@ -209,7 +209,25 @@ h1 {
     animation-delay: 1.8s;
     z-index: 2;
 }
+@media (max-width: 600px) {
+      .balloon:nth-child(3) {   /* yellow */
+          left: 18%;
+          top: 54%;
+      }
 
+      .balloon:nth-child(4) {   /* green */
+          right: 10%;
+          top: 60%;
+      }
+      .balloon:nth-child(5) {   /* blue */
+          left: 18%;
+          top: 165%;
+      }
+      .balloon:nth-child(6) {   /* orange */
+          right: 15%;
+          top: 160%;
+      }
+  }
 .confetti {
     position: fixed;
     width: 10px;

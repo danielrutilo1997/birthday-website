@@ -109,6 +109,12 @@
         img.loading = 'lazy';
         img.decoding = 'async';
         img.src = memory.photo;
+        // Optional framing. Cards crop with `object-fit: cover`, which keeps
+        // the middle of the photo. Phone photos often put the subject off
+        // centre, so `focus` moves the crop without touching CSS.
+        if (memory.focus) {
+            img.style.objectPosition = memory.focus;
+        }
         // The caption already describes the photo, so reuse it rather than
         // leaving alt empty.
         img.alt = memory.caption || '';

@@ -19,7 +19,7 @@ const CONTENT = {
        --------------------------------------------------------------- */
 
     // Parsed with new Date(). Keep this exact format.
-    targetDate: 'September 20, 2026 17:54:00',
+    targetDate: 'September 20, 2026 18:56:00',
 
     // Heading above the countdown clock.
     countdownHeading: "Time until Casandra's special day!",
@@ -34,7 +34,7 @@ const CONTENT = {
 
     // The big reveal message. Shown when the countdown hits zero.
     birthdayMessage: "On this day, an amazing, beautiful and wonderful girl was born. I hope this year brings you everything you've ever wanted because you deserve it. Here's to making so many more wonderful memories with you Casandra! I love you!",
-    /* Another year goes by, another wonderful year I got to spend with you. */
+    /* Another wonderful year goes by that I got to spend with you mailob. I love you so very much! */
     // Heading above the memory gallery (Sprint 2).
     galleryHeading: 'Us, so far',
 
@@ -73,18 +73,30 @@ const CONTENT = {
         //   caption (required) shown under the card and in the lightbox
         //   date    (optional) 'YYYY-MM-DD', used only for ordering;
         //                      undated entries sort to the end
+        //   focus   (optional) which part of the photo the card keeps when
+        //                      it crops. Default is dead centre. Use
+        //                      'center 30%' to keep more of the TOP,
+        //                      'center 70%' to keep more of the BOTTOM.
+        //                      Nudge in steps of 10% until it looks right.
+        //                      Only affects the card; the lightbox always
+        //                      shows the whole photo uncropped.
         //
         // These five are PLACEHOLDERS pointing at images already in the
         // repo, so you can see the layout. Replace them.
         {
-            photo: 'assets/images/husky.jpg',
-            caption: 'PLACEHOLDER — the day we met this goofball.',
-            date: '2024-06-12'
+            photo: 'assets/images/amazing.jpeg',
+            caption: 'A year ago on your birthday.',
+            date: '2024-06-12',
+            focus: 'center 20%'
         },
         {
-            photo: 'assets/images/japan-sakura-flower_24877-82387.jpg',
-            caption: 'PLACEHOLDER — sakura season.',
-            date: '2024-11-03'
+            photo: 'assets/images/goofball.jpg',
+            caption: 'The day we met this goofball.',
+            date: '2024-11-03',
+            // This one is a portrait phone photo, so the card crops it a
+            // lot. Raise the number to push the crop DOWN (keeps more of
+            // the bottom), lower it to pull the crop UP.
+            focus: 'center 30%'
         },
         {
             photo: 'assets/images/flower.png',
