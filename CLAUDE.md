@@ -58,23 +58,23 @@ Done when: site looks/behaves identically to today, just reorganized, and
 One new note/photo unlocks per day counting down to Oct 1, so the page
 rewards repeat visits instead of being a one-shot reveal.
 
-- [ ] Data shape in `content.js`:
+- [x] Data shape in `content.js`:
   ```js
   dailyReveals: [
     { date: '2026-09-20', message: '...', photo: 'assets/images/...' }, // photo optional
     // one entry per day Daniel wants to cover, in any order
   ]
   ```
-- [ ] Logic: compare today's date against each entry's `date`; show all
+- [x] Logic: compare today's date against each entry's `date`; show all
       entries whose date is `<= today` (most recent first), keep future ones
       hidden. Use the real calendar date, not visit count or localStorage,
       so it can't be skipped by clearing browser data — but do use
       localStorage to remember if she's "seen" today's entry, to drive an
       optional "new!" badge.
-- [ ] UI: a card/section (e.g. "A little something for today") separate from
+- [x] UI: a card/section (e.g. "A little something for today") separate from
       the final birthday message, showing the unlocked list newest-first,
       collapsed/expanded per entry.
-- [ ] Handle the empty case gracefully (no entries yet, or all in the future)
+- [x] Handle the empty case gracefully (no entries yet, or all in the future)
       by hiding the section rather than showing an empty box.
 
 Done when: Daniel can add an entry to `content.js` with a date and it
@@ -152,27 +152,112 @@ Do last so it's polishing real content rather than placeholders.
 
 ## Known open item (not a feature)
 
-`git remote -v` currently has a GitHub personal access token embedded in the
-origin URL. Rotate the token and reset the remote to the plain
-`https://github.com/...` URL using a credential manager instead.
+RESOLVED in the remote URL (checked 2026-09-27): origin now uses SSH
+(`git@github.com:...`), so no token is embedded any more. If the old personal
+access token was never revoked on GitHub, revoke it there — it was stored in
+plain text in `.git/config` for a while.
 
-## Where we left off (2026-09-20)
+## Where we left off (2026-09-26)
 
-Sprint 0 and Sprint 2 are done on `develop`. Sprint 1 is deliberately SKIPPED
-for now — Daniel has no daily messages written yet but wants them to start
-appearing on 2026-09-27, so the `dailyReveals` placeholders in `content.js`
-are dated 09-27 through 09-30 and nothing on the site reads them yet.
+Sprints 0, 1 and 2 are done on `develop` (Sprint 1 and the flip-card
+gallery are not yet committed as of 2026-09-26). `main` still has the old
+single-file site — nothing from this sprint plan has shipped yet.
+
+URGENT for shipping: the first daily note unlocks 2026-09-27. The four
+`dailyReveals` entries in `content.js` are still PLACEHOLDER text and WILL be
+shown to her on their dates if deployed as-is.
+
+Sprint 1 (daily notes) as built:
+
+- Section sits between the main card and the gallery. Heading and the
+  "come back tomorrow" teaser text come from `CONTENT.dailyHeading` /
+  `CONTENT.dailyTeaser`.
+- Unlocking compares LOCAL calendar-day strings ('YYYY-MM-DD' via `dayKey`
+  in `script.js`). Never parse an entry date with `new Date('YYYY-MM-DD')` —
+  that is UTC midnight, i.e. the previous afternoon in California, and would
+  unlock notes ~7 hours early.
+- Dates are normalised (`2026-9-27` works); impossible dates or empty
+  messages are skipped with a console warning.
+- Every note starts sealed; unopened ones carry a "new!" badge. Opening one
+  records its key (`date#n`, n = position among notes on that day) in
+  localStorage `birthday.openedNotes`. That only drives the badge; it can't
+  unlock anything early.
+- Teaser only appears when tomorrow really has a note.
+- A page left open past midnight unlocks the new note by itself (timer at
+  midnight, plus a re-check on `visibilitychange` because phones pause
+  background timers).
+- `?preview=YYYY-MM-DD` renders the notes as of that day with a yellow
+  banner, for Daniel to check notes ahead of time. Preview never records
+  anything as opened. A bad value is ignored. Note that all future notes
+  are readable in `content.js` by anyone who views source — inherent to
+  a static site with no backend.
+- Optional `photo` shows as a small print inside the note; a bad path shows
+  "photo not found" (same rule as the gallery).
+- Reduced motion: badge pulse, open animation and chevron turn are off.
+
+Verified 2026-09-26 in headless Chrome (390x844, touch, America/Los_Angeles
+timezone, faked clock, patched content.js served from the test harness):
+44 checks, all pass. That covers the UTC-midnight trap, 11:59:50pm vs
+12:00:30am, ordering, badges, persistence across reload, the midnight
+rollover, preview, bad entries, duplicate dates, photo and broken photo,
+the keyboard, and reduced motion.
+
+Countdown redesign (2026-09-27):
+
+- The biggest unit still left is a big Pacifico "hero" number with a line
+  under it from `CONTENT.countdownHeroLabel` ('{unit} to go, mailob'; {unit}
+  becomes day/days/hour/hours/...). All week it's days; on the last day the
+  hero becomes hours, then minutes, then a big seconds count in the final
+  minute. Only the smaller units show as blocks underneath (hours teal,
+  minutes yellow, seconds mint; the hero keeps the old Days coral).
+- Blocks are one row on phones (fixes Seconds sitting alone on its own row),
+  dark text (#2d2d44) for contrast 6.9-10.7:1 (white was 1.3-1.9:1), no more
+  constant wobble. Only a value that changed gets a 0.35s `.tick` pop
+  (`setValue` in script.js). `.tick` is in the reduced-motion block.
+- Heading is Pacifico. The empty countdown title (`title.countdown: ''`)
+  collapses via `#title:empty`, so it leaves no gap.
+- Verified in headless Chrome with a faked clock: 19 checks (every hero switch,
+  singular/plural, blocks, contrast, tick, handoff to celebrate at zero).
+
+Font note: `.note-message` now starts with 'Comic Sans MS' (Daniel's
+choice). iPhones don't have Comic Sans, so on her phone it falls back to
+Dancing Script. The Comic Neue Google Font would give the same look on every
+device.
+
+KNOWN ISSUE (Oct 1 only): in the celebration state the two `top: 130%` balloons
+land on the daily-notes heading and a balloon string crosses the first
+note. Fix alongside Sprint 3's poppable balloons.
 
 Sprint 2 (memory gallery) as built:
 
 - `CONTENT.memories` drives everything. Adding `{ photo, caption, date }` is
   the only step to add a card; `date` is optional and only orders the list.
-- Order is oldest-first (a timeline); undated entries sort to the end.
+- Order is oldest-first (a timeline); undated entries sort to the end. The
+  `date` fields now match the dates written in the captions (2026-09-26).
 - Horizontal scroll-snap strip of cards; each card is a `<button>`, so it is
   keyboard reachable and works with Enter/Space.
+- Cards show the photo only (no text), styled as small photo prints: 8px
+  white border, 4px radius. Keyboard focus is a teal outline, not a border
+  colour, so the print border stays white.
+- The lightbox shows the photo as a classic print that turns over (3D flip)
+  on tap, Enter or Space. The caption is written on the back: `splitCaption`
+  in `script.js` treats everything after the caption's LAST `\n` as the date,
+  shown on its own line underneath, smaller. No `\n` means no date line.
+  Always opens face up.
+- The tap target is `#print-stage`, a `div role="button"`, deliberately not a
+  `<button>`: Firefox wraps button contents in an anonymous box that flattens
+  `preserve-3d`, which would show a mirrored front instead of the back. Also
+  never put `overflow: hidden` on `.print` — iOS Safari flattens the flip.
 - Lightbox closes on backdrop click, the close button, or Escape, locks body
-  scroll while open, and returns focus to the card that opened it.
+  scroll while open, and returns focus to the card that opened it. On open,
+  focus goes to the print so Enter/Space flips it immediately.
+- Reduced motion: the flip is an instant swap (`.print` is in the
+  reduced-motion block).
 - Images are `loading="lazy"` + `decoding="async"`.
+- The gallery is part of the birthday reveal: `initGallery()` runs from
+  `celebrate()` (guarded to run once), never at page load. During the
+  countdown the section is hidden and no memory photos are downloaded. If
+  the page is open when the countdown hits zero, it appears then.
 - Empty `memories` array hides the whole section.
 - A photo path that fails to load flags the card `is-broken` and shows
   "photo not found", so a typo in `content.js` is visible rather than silent.
@@ -181,11 +266,16 @@ Sprint 2 (memory gallery) as built:
 26 logic checks pass (rendering, ordering, empty case, lightbox open/close,
 Esc, backdrop, focus return, broken paths).
 
-STILL UNVERIFIED — the mobile check in the Sprint 2 list is NOT ticked. There
-was no browser automation available this session, so the gallery has only
-been verified by logic tests and static analysis, never actually looked at.
-Someone needs to open it on a real phone-sized viewport and confirm the
-horizontal swipe feels right and the lightbox is usable.
+2026-09-26: the flip-card lightbox was checked in real (headless) Chrome at
+390x844 phone emulation with touch taps, at 1280x800 desktop, and with
+reduced motion emulated — 32-33 checks each, all passing, screenshots
+reviewed (layout fits on screen, back face matches front size, keyboard
+path, focus return, no console errors).
+
+STILL UNVERIFIED — the mobile check in the Sprint 2 list is still NOT ticked:
+nothing has been tested on a real iPhone in Safari. iOS WebKit's 3D rendering
+is the one thing headless Chrome can't vouch for, and the horizontal swipe
+"feel" needs a real finger. Daniel needs to open it on his phone.
 
 Two layout changes worth knowing about:
 
@@ -198,8 +288,9 @@ Two layout changes worth knowing about:
 
 Still open from Sprint 0: the `.confetti:nth-child(N)` off-by-two bug
 described above is unfixed, and `CONTENT.targetDate` is currently set to a
-past date ('September 20, 2026 17:54:00') from local testing — it MUST go
+past date ('September 20, 2026 18:56:00') from local testing — it MUST go
 back to 'October 1, 2026 00:00:00' before this ships.
 
-Next session: Sprint 3 (poppable balloons + confetti cannon button), or
-Sprint 1 once the daily messages exist.
+Next: ship to `main` before 2026-09-27 (real notes in, targetDate reset,
+merge), then Sprint 3 (poppable balloons + confetti cannon button, and the
+balloon overlap above).

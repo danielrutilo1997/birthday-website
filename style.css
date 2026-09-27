@@ -353,77 +353,326 @@ h1 {
         transform: translateY(-15px) rotate(3deg);
     }
 }
+/* ---------------------------------------------------------------
+   Countdown
+
+   The biggest unit still left is the hero number (days all week,
+   hours on the last day, ...); the smaller units tick in a row of
+   blocks underneath. Days keep the coral that used to be the Days
+   block; hours, minutes and seconds keep teal, yellow and mint.
+   --------------------------------------------------------------- */
+
 .countdown-container {
-    margin: 30px 0;
+    margin: 24px 0 30px;
     position: relative;
     z-index: 2;
 }
 
 .countdown-container h2 {
+    font-family: 'Pacifico', 'Comic Sans MS', 'Marker Felt', cursive;
+    font-weight: normal;
     font-size: 1.5em;
+    line-height: 1.4;
     color: #667eea;
-    margin-bottom: 20px;
+    margin-bottom: 4px;
+    text-wrap: balance;
 }
 
 .countdown {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
 }
 
-.time-block {
-    padding: 20px;
-    border-radius: 10px;
-    min-width: 80px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    animation: partyPulse 1s ease-in-out infinite;
+.countdown-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.time-block:nth-child(1) {
+.hero-number {
+    display: inline-block;
+    font-family: 'Pacifico', 'Comic Sans MS', 'Marker Felt', cursive;
+    font-size: clamp(5.5rem, 28vw, 8rem);
+    line-height: 1.25;
+    /* Pacifico's swashes reach outside the glyph box; the padding keeps
+       the gradient from clipping them. */
+    padding: 0 0.2em;
+    color: #ff6b6b;
     background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
-    animation-delay: 0s;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    /* filter, not text-shadow: a text-shadow would paint over the
+       gradient, because the gradient is the background. */
+    filter: drop-shadow(0 4px 6px rgba(201, 21, 21, 0.2));
 }
 
-.time-block:nth-child(2) {
+.hero-label {
+    font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
+    font-size: 1.6em;
+    line-height: 1.2;
+    color: #c91515;
+    margin-top: -0.2em;
+    text-wrap: balance;
+}
+
+.countdown-rest {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.countdown-rest[hidden],
+.time-block[hidden] {
+    display: none;
+}
+
+/* Dark text on every block: white was nearly unreadable on the yellow
+   and mint (about 1.3:1 and 1.6:1 contrast), and not much better on teal. */
+.time-block {
+    flex: 0 1 100px;
+    padding: 12px 6px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    color: #2d2d44;
+}
+
+.time-block[data-unit="hours"] {
     background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
-    animation-delay: 0.2s;
 }
 
-.time-block:nth-child(3) {
+.time-block[data-unit="minutes"] {
     background: linear-gradient(135deg, #ffe66d 0%, #ffd93d 100%);
-    animation-delay: 0.4s;
 }
 
-.time-block:nth-child(4) {
+.time-block[data-unit="seconds"] {
     background: linear-gradient(135deg, #a8e6cf 0%, #88d8b0 100%);
-    animation-delay: 0.6s;
-}
-
-@keyframes partyPulse {
-    0%, 100% {
-        transform: scale(1) rotate(0deg);
-    }
-    25% {
-        transform: scale(1.1) rotate(-3deg);
-    }
-    75% {
-        transform: scale(1.1) rotate(3deg);
-    }
 }
 
 .time {
     display: block;
-    font-size: 2.5em;
+    font-size: 2em;
     font-weight: bold;
-    color: white;
+    font-variant-numeric: tabular-nums;
 }
 
 .label {
     display: block;
-    font-size: 0.9em;
-    color: rgba(255, 255, 255, 0.9);
-    margin-top: 5px;
+    font-size: 0.8em;
+    opacity: 0.75;
+    margin-top: 2px;
+}
+
+/* A small pop on whichever number just changed (see setValue). */
+.tick {
+    animation: tick 0.35s ease-out;
+}
+
+@keyframes tick {
+    from {
+        transform: scale(1.18);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+/* The title is blank during the countdown; don't leave a gap for it. */
+#title:empty {
+    display: none;
+}
+
+/* ---------------------------------------------------------------
+   Daily notes (Sprint 1)
+
+   A stack of sealed notes, newest first. Each opens in place; the
+   message uses the same handwriting and ink as the back of the
+   photo prints.
+   --------------------------------------------------------------- */
+
+.daily {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 90%;
+    margin: 0 auto 40px;
+}
+
+.daily[hidden] {
+    display: none;
+}
+
+@media (min-width: 600px) {
+    .daily {
+        max-width: 600px;
+    }
+}
+
+/* Only ever seen by Daniel, via ?preview=YYYY-MM-DD. */
+.daily-preview {
+    background: #ffe66d;
+    color: #c91515;
+    font-size: 0.85em;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.daily-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.note {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+.note-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 52px;
+    padding: 14px 18px;
+    border: none;
+    background: none;
+    font: inherit;
+    font-weight: bold;
+    color: #667eea;
+    text-align: left;
+    cursor: pointer;
+}
+
+/* Inset, because .note clips anything drawn outside it. */
+.note-toggle:focus-visible {
+    outline: 3px solid #4ecdc4;
+    outline-offset: -3px;
+}
+
+.note-date {
+    flex: 1;
+}
+
+.note-badge {
+    display: inline-block;
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 0.8em;
+    letter-spacing: 0.04em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    animation: badgePulse 1.6s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.12);
+    }
+}
+
+.note-chevron {
+    width: 10px;
+    height: 10px;
+    margin: 0 4px 4px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg);
+    transition: transform 0.25s ease;
+}
+
+.note.is-open .note-chevron {
+    transform: rotate(225deg);
+    margin-bottom: -4px;
+}
+
+.note-body {
+    padding: 2px 20px 22px;
+    animation: noteOpen 0.35s ease-out;
+}
+
+.note-body[hidden] {
+    display: none;
+}
+
+@keyframes noteOpen {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.note-message {
+    font-family: 'Comic Sans MS', 'Brush Script MT', 'Dancing Script', cursive;
+    font-size: 1.5em;
+    line-height: 1.4;
+    color: #c91515;
+    white-space: pre-line;
+}
+
+/* A small print tucked into the note, matching the gallery prints. */
+.note-photo {
+    display: block;
+    max-width: 100%;
+    max-height: 50vh;
+    margin: 16px auto 0;
+    border: 8px solid #fff;
+    border-radius: 4px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    background: #a8e6cf;
+}
+
+.note.is-broken .note-photo {
+    display: none;
+}
+
+.note.is-broken .note-body::after {
+    content: 'photo not found';
+    display: block;
+    margin-top: 16px;
+    padding: 24px;
+    background: #ffe66d;
+    color: #c91515;
+    font-size: 0.85em;
+    text-align: center;
+    border-radius: 4px;
+}
+
+.daily-hint {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+    margin-top: 12px;
+}
+
+.daily-hint[hidden],
+.daily-teaser[hidden],
+.daily-preview[hidden] {
+    display: none;
+}
+
+.daily-teaser {
+    font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
+    font-size: 1.35em;
+    color: #ffe66d;
+    text-align: center;
+    margin-top: 14px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 /* ---------------------------------------------------------------
@@ -451,13 +700,17 @@ h1 {
     }
 }
 
-.gallery-heading {
+/* Shared with the daily notes heading so the two sections read as one site. */
+.gallery-heading,
+.daily-heading {
     font-family: 'Pacifico', 'Comic Sans MS', 'Marker Felt', cursive;
     font-size: 2em;
     color: #ffe66d;
     text-align: center;
     margin-bottom: 18px;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    /* Even line lengths instead of a lone word dangling on the last line. */
+    text-wrap: balance;
 }
 
 /* The scroller itself. Negative margin + matching padding lets cards run to
@@ -470,7 +723,9 @@ h1 {
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     scroll-padding: 0 16px;
-    padding: 6px 16px 18px;
+    /* Top room covers the hover lift plus the keyboard focus outline, which
+       would otherwise be clipped by overflow-y: hidden. */
+    padding: 14px 16px 18px;
     margin: 0 -16px;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
@@ -485,7 +740,9 @@ h1 {
     border-radius: 4px;
 }
 
-/* Cards are <button> so they are focusable and work with Enter/Space. */
+/* Cards are <button> so they are focusable and work with Enter/Space.
+   Styled as small photo prints to match the lightbox: even white border,
+   nearly square corners. */
 .memory-card {
     flex: 0 0 auto;
     width: 200px;
@@ -493,8 +750,8 @@ h1 {
     display: flex;
     flex-direction: column;
     padding: 0;
-    border: 4px solid #fff;
-    border-radius: 18px;
+    border: 8px solid #fff;
+    border-radius: 4px;
     background: #fff;
     font: inherit;
     text-align: left;
@@ -517,8 +774,11 @@ h1 {
     outline: none;
 }
 
+/* An outline rather than a border colour, so the white print border stays
+   white. Declared after the shared rule above so it wins. */
 .memory-card:focus-visible {
-    border-color: #4ecdc4;
+    outline: 3px solid #4ecdc4;
+    outline-offset: 3px;
 }
 
 .memory-card-photo {
@@ -527,14 +787,6 @@ h1 {
     object-fit: cover;
     display: block;
     background: #a8e6cf;
-}
-
-.memory-card-caption {
-    font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
-    font-size: 1.15em;
-    line-height: 1.35;
-    color: #c91515;
-    padding: 10px 12px 14px;
 }
 
 /* Shown when a photo path does not resolve, so a typo in content.js is
@@ -577,8 +829,10 @@ h1 {
     inset: 0;
     z-index: 50;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 14px;
     padding: 24px;
     background: rgba(0, 0, 0, 0.85);
     animation: lightboxIn 0.2s ease-out;
@@ -597,32 +851,99 @@ h1 {
     }
 }
 
-.lightbox-figure {
-    max-width: 100%;
-    max-height: 100%;
+/* The photo print. The stage supplies perspective and is the tap target;
+   .print is the card that actually rotates; the two faces sit back to back.
+   The front stays in normal flow so the photo sets the print's size, and
+   the back is laid over it, so both sides always match whatever the photo's
+   shape. Nothing on .print may use overflow: hidden — iOS Safari flattens
+   the 3D flip if it does. */
+.print-stage {
+    perspective: 1200px;
+    cursor: pointer;
+    border-radius: 4px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.print-stage:focus {
+    outline: none;
+}
+
+.print-stage:focus-visible {
+    outline: 3px solid #4ecdc4;
+    outline-offset: 6px;
+}
+
+.print {
+    position: relative;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: transform 0.6s ease;
+}
+
+.print.is-flipped {
+    transform: rotateY(180deg);
+}
+
+.print-face {
+    padding: 12px;
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.print-back {
+    position: absolute;
+    inset: 0;
+    transform: rotateY(180deg);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-}
-
-.lightbox-img {
-    max-width: 100%;
-    /* Leave room for the caption under the photo on short screens. */
-    max-height: 70vh;
-    object-fit: contain;
-    border-radius: 14px;
-    border: 4px solid #fff;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-}
-
-.lightbox-caption {
-    font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
-    font-size: 1.5em;
-    line-height: 1.4;
-    color: #fff;
+    justify-content: center;
+    padding: 24px;
     text-align: center;
-    max-width: 600px;
+    /* Safety net for a very long caption on a small print. */
+    overflow: auto;
+}
+
+/* Sized from the viewport rather than a percentage: the print shrinks to
+   fit the photo, so a percentage would have nothing fixed to resolve
+   against. The 150px keeps room for the hint and close button. */
+.print-img {
+    display: block;
+    max-width: min(calc(100vw - 72px), 900px);
+    max-height: calc(100vh - 150px);
+    max-height: calc(100dvh - 150px);
+    background: #a8e6cf;
+}
+
+.print-note {
+    font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
+    font-size: clamp(1.5rem, 6.5vw, 2.4rem);
+    line-height: 1.35;
+    color: #c91515;
+    white-space: pre-line;
+    /* Even line lengths instead of a lone word dangling on the last line. */
+    text-wrap: balance;
+}
+
+.print-date {
+    font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
+    font-size: clamp(1.05rem, 4.5vw, 1.6rem);
+    color: #c91515;
+    margin-top: 0.8em;
+}
+
+.print-date[hidden] {
+    display: none;
+}
+
+.lightbox-hint {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
 }
 
 .lightbox-close {
@@ -670,9 +991,15 @@ body.lightbox-open {
     .balloon,
     .flower-img,
     .husky,
-    .time-block,
-    .lightbox {
+    .tick,
+    .lightbox,
+    .note-body,
+    .note-badge {
         animation: none !important;
+    }
+
+    .note-chevron {
+        transition: none !important;
     }
 
     /* Keep the gallery usable, just still. */
@@ -687,6 +1014,11 @@ body.lightbox-open {
 
     .gallery-scroll {
         scroll-behavior: auto !important;
+    }
+
+    /* The print still turns over, it just swaps sides instantly. */
+    .print {
+        transition: none !important;
     }
 
     /* Confetti only reads as confetti while it is falling; frozen, it

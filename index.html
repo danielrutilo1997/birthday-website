@@ -34,22 +34,27 @@
         <img src="assets/images/flower.png" class="flower-img flower-bottom-right" alt="Flower">
         <div class="countdown-container">
             <h2 id="countdown-heading"></h2>
+            <!-- The biggest unit still left (days, then hours on the last
+                 day, ...) is the hero; the smaller units tick in blocks
+                 underneath. script.js decides which blocks show. -->
             <div class="countdown" id="countdown">
-                <div class="time-block">
-                    <span class="time" id="days">00</span>
-                    <span class="label">Days</span>
+                <div class="countdown-hero">
+                    <span class="hero-number" id="hero-number">0</span>
+                    <span class="hero-label" id="hero-label"></span>
                 </div>
-                <div class="time-block">
-                    <span class="time" id="hours">00</span>
-                    <span class="label">Hours</span>
-                </div>
-                <div class="time-block">
-                    <span class="time" id="minutes">00</span>
-                    <span class="label">Minutes</span>
-                </div>
-                <div class="time-block">
-                    <span class="time" id="seconds">00</span>
-                    <span class="label">Seconds</span>
+                <div class="countdown-rest" id="countdown-rest">
+                    <div class="time-block" data-unit="hours">
+                        <span class="time" id="hours">00</span>
+                        <span class="label" id="hours-label">hours</span>
+                    </div>
+                    <div class="time-block" data-unit="minutes">
+                        <span class="time" id="minutes">00</span>
+                        <span class="label" id="minutes-label">minutes</span>
+                    </div>
+                    <div class="time-block" data-unit="seconds">
+                        <span class="time" id="seconds">00</span>
+                        <span class="label" id="seconds-label">seconds</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -59,21 +64,45 @@
         </div>
     </div>
 
+    <!-- Daily notes (Sprint 1). Notes are built by script.js from
+         CONTENT.dailyReveals; the section stays hidden until at least one
+         note's date has arrived. -->
+    <section class="daily" id="daily" hidden>
+        <p class="daily-preview" id="daily-preview" hidden></p>
+        <h2 class="daily-heading" id="daily-heading"></h2>
+        <div class="daily-list" id="daily-list"></div>
+        <p class="daily-hint" id="daily-hint" hidden>tap a note to open it</p>
+        <p class="daily-teaser" id="daily-teaser" hidden></p>
+    </section>
+
     <!-- Memory gallery (Sprint 2). Cards are built by script.js from
-         CONTENT.memories; the section stays hidden if that array is empty. -->
+         CONTENT.memories once the countdown finishes; until then, or if
+         that array is empty, the section stays hidden. -->
     <section class="gallery" id="gallery" hidden>
         <h2 class="gallery-heading" id="gallery-heading"></h2>
         <div class="gallery-scroll" id="gallery-scroll"></div>
         <p class="gallery-hint" id="gallery-hint">swipe to see more &rarr;</p>
     </section>
 
-    <!-- Lightbox. Single reusable instance; contents swapped on open. -->
-    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption" hidden>
+    <!-- Lightbox. Single reusable instance; contents swapped on open.
+         The photo is a two-sided print: tap it to turn it over and read the
+         caption on the back. The tap target is a div with role="button"
+         rather than a real <button> because Firefox wraps button contents in
+         an anonymous box that flattens the 3D flip. -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lightbox-caption lightbox-date" hidden>
         <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close photo">&times;</button>
-        <figure class="lightbox-figure">
-            <img class="lightbox-img" id="lightbox-img" src="" alt="">
-            <figcaption class="lightbox-caption" id="lightbox-caption"></figcaption>
-        </figure>
+        <div class="print-stage" id="print-stage" role="button" tabindex="0" aria-pressed="false" aria-label="Turn photo over">
+            <div class="print" id="print">
+                <div class="print-face print-front">
+                    <img class="print-img" id="lightbox-img" src="" alt="">
+                </div>
+                <div class="print-face print-back">
+                    <p class="print-note" id="lightbox-caption"></p>
+                    <p class="print-date" id="lightbox-date"></p>
+                </div>
+            </div>
+        </div>
+        <p class="lightbox-hint">tap the photo to turn it over</p>
     </div>
 
     <script src="content.js"></script>
