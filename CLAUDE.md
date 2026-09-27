@@ -157,15 +157,23 @@ RESOLVED in the remote URL (checked 2026-09-27): origin now uses SSH
 access token was never revoked on GitHub, revoke it there — it was stored in
 plain text in `.git/config` for a while.
 
-## Where we left off (2026-09-26)
+## Where we left off (2026-09-27)
 
-Sprints 0, 1 and 2 are done on `develop` (Sprint 1 and the flip-card
-gallery are not yet committed as of 2026-09-26). `main` still has the old
-single-file site — nothing from this sprint plan has shipped yet.
+LIVE since 2026-09-27 (commit 3ca3794): Sprints 0, 1 and 2 plus the
+countdown redesign are on `main`, which GitHub Pages publishes (legacy
+build from `main`, repo root) at
+https://danielrutilo1997.github.io/birthday-website/
 
-URGENT for shipping: the first daily note unlocks 2026-09-27. The four
-`dailyReveals` entries in `content.js` are still PLACEHOLDER text and WILL be
-shown to her on their dates if deployed as-is.
+Deploy gotcha: that push to `main` did NOT trigger a Pages build (nothing
+after 5 minutes; the Actions list showed no new run). Requesting one with
+`gh api -X POST repos/danielrutilo1997/birthday-website/pages/builds`
+worked in about 40s. After every push, confirm that
+`gh api repos/danielrutilo1997/birthday-website/pages/builds/latest` shows
+the new commit as `built`, and curl the live `content.js`.
+
+URGENT: the 2026-09-30 note in `content.js` is still PLACEHOLDER text and
+WILL be shown to her if it isn't replaced, committed, merged and pushed before
+then. Notes for 9/27-9/29 are written.
 
 Sprint 1 (daily notes) as built:
 
@@ -286,11 +294,11 @@ Two layout changes worth knowing about:
   land relative to the fold once the countdown finishes. Balloons only show
   in the celebration state, so this needs a look in that state specifically.
 
-Still open from Sprint 0: the `.confetti:nth-child(N)` off-by-two bug
-described above is unfixed, and `CONTENT.targetDate` is currently set to a
-past date ('September 20, 2026 18:56:00') from local testing — it MUST go
-back to 'October 1, 2026 00:00:00' before this ships.
+Still open from Sprint 0: the `.confetti:nth-child(N)` off-by-two bug is
+unfixed. (`CONTENT.targetDate` is back to 'October 1, 2026 00:00:00' and
+live. If it's set to a past date for local testing, it must never be pushed
+that way.)
 
-Next: ship to `main` before 2026-09-27 (real notes in, targetDate reset,
-merge), then Sprint 3 (poppable balloons + confetti cannon button, and the
-balloon overlap above).
+Next: replace the 9/30 note and ship it (commit, merge to `main`, push,
+confirm the Pages build), then Sprint 3 (poppable balloons + confetti cannon
+button, and the balloon overlap above).
