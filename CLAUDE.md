@@ -171,9 +171,8 @@ worked in about 40s. After every push, confirm that
 `gh api repos/danielrutilo1997/birthday-website/pages/builds/latest` shows
 the new commit as `built`, and curl the live `content.js`.
 
-URGENT: the 2026-09-30 note in `content.js` is still PLACEHOLDER text and
-WILL be shown to her if it isn't replaced, committed, merged and pushed before
-then. Daniel plans a video for it. Notes for 9/27-9/29 are written.
+All four daily notes (9/27-9/30) are written and live as of 2026-09-28;
+9/30 carries the aquarium video (`assets/video/mbaquarium.mp4`).
 
 If git fails with "You have not agreed to the Xcode license agreements",
 prefix it with `DEVELOPER_DIR=/Library/Developer/CommandLineTools` until
