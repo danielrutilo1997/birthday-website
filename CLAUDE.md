@@ -173,7 +173,11 @@ the new commit as `built`, and curl the live `content.js`.
 
 URGENT: the 2026-09-30 note in `content.js` is still PLACEHOLDER text and
 WILL be shown to her if it isn't replaced, committed, merged and pushed before
-then. Notes for 9/27-9/29 are written.
+then. Daniel plans a video for it. Notes for 9/27-9/29 are written.
+
+If git fails with "You have not agreed to the Xcode license agreements",
+prefix it with `DEVELOPER_DIR=/Library/Developer/CommandLineTools` until
+Daniel runs `sudo xcodebuild -license` in Terminal.
 
 Sprint 1 (daily notes) as built:
 
@@ -200,7 +204,15 @@ Sprint 1 (daily notes) as built:
   are readable in `content.js` by anyone who views source — inherent to
   a static site with no backend.
 - Optional `photo` shows as a small print inside the note; a bad path shows
-  "photo not found" (same rule as the gallery).
+  "photo not found" (same rule as the gallery). GIFs work as a `photo`.
+- Optional `video` (added 2026-09-28): an .mp4 in `assets/video/`, shown in
+  the same print frame with native controls, `playsinline` (no iPhone
+  full-screen jump). `src` is only set on first open (a sealed note
+  downloads nothing), with `#t=0.001` so iOS paints the first frame.
+  Collapsing the note pauses it. A bad path shows "video not found".
+  Convert Daniel's exports with the built-in `avconvert -p Preset1280x720
+  -o out.mp4` (H.264, fast-start, strips location metadata). Verified in
+  headless Chrome (22 checks), not yet on a real iPhone.
 - Reduced motion: badge pulse, open animation and chevron turn are off.
 
 Verified 2026-09-26 in headless Chrome (390x844, touch, America/Los_Angeles

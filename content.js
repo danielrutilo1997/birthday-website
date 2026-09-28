@@ -58,7 +58,11 @@ const CONTENT = {
          message (required) the note. Use \n to start a new line.
          photo   (optional) path relative to index.html, e.g.
                             'assets/images/beach.jpeg'. Leave as null
-                            for no photo.
+                            for no photo. A .gif works here too.
+         video   (optional) an .mp4 in assets/video/, e.g.
+                            video: 'assets/video/wednesday.mp4'
+                            She taps play; it plays inside the note,
+                            with sound. Keep it short (under ~30MB).
 
        To check a note before its day, open the site with
        ?preview=2026-09-29 on the end of the address. That shows
@@ -79,7 +83,7 @@ const CONTENT = {
         // PLACEHOLDER.
         { date: '2026-09-27', message: "Its the first day of your birthday week mailob! I look forward to your special day which is 4 days away. I hope this week is filled with lots of love and fun. I love you so much! Happy early birthday!", photo: 'assets/images/gettyvilla.jpeg' },
         { date: '2026-09-28', message: "5 things I love about you: Your work ethic is unmatched. You are very sweet. You are passionate about what you do. You are kind to others. You are an amazing partner. Happy Monday, I love you very much mailob!", photo: 'assets/images/beautiful.jpeg' },
-        { date: '2026-09-29', message: "It is now Tuesday!!! I get to spend today with you despite it being at work I'm still so happy.", photo: null },
+        { date: '2026-09-29', message: "It is now Tuesday!!! I get to spend today with you even though we have to work first. I love you very much and I want you to know that we'll be eating some delicious food tonight! (; I'm so excited to be celebrating your birthday soon mailob!", photo: 'assets/images/sanfran.jpeg' },
         { date: '2026-09-30', message: 'PLACEHOLDER — day four.', photo: null }
     ],
 

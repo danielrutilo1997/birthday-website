@@ -625,7 +625,8 @@ h1 {
 }
 
 /* A small print tucked into the note, matching the gallery prints. */
-.note-photo {
+.note-photo,
+.note-video {
     display: block;
     max-width: 100%;
     max-height: 50vh;
@@ -636,11 +637,13 @@ h1 {
     background: #a8e6cf;
 }
 
-.note.is-broken .note-photo {
+.note.is-broken .note-photo,
+.note.is-broken-video .note-video {
     display: none;
 }
 
-.note.is-broken .note-body::after {
+.note.is-broken .note-body::after,
+.note.is-broken-video .note-body::after {
     content: 'photo not found';
     display: block;
     margin-top: 16px;
@@ -650,6 +653,10 @@ h1 {
     font-size: 0.85em;
     text-align: center;
     border-radius: 4px;
+}
+
+.note.is-broken-video .note-body::after {
+    content: 'video not found';
 }
 
 .daily-hint {

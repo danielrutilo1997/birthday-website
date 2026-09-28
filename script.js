@@ -203,7 +203,8 @@
                 key: day + '#' + perDay[day],
                 index: index,
                 message: entry.message,
-                photo: entry.photo || ''
+                photo: entry.photo || '',
+                video: entry.video || ''
             });
         });
         return notes;
@@ -264,11 +265,35 @@
             body.appendChild(img);
         }
 
+        var video = null;
+        if (note.video) {
+            video = document.createElement('video');
+            video.className = 'note-video';
+            video.controls = true;
+            video.preload = 'metadata';
+            // Without playsinline, iPhones jump to full screen on play.
+            video.playsInline = true;
+            video.setAttribute('playsinline', '');
+            video.addEventListener('error', function () {
+                item.classList.add('is-broken-video');
+            });
+            body.appendChild(video);
+        }
+
         toggle.addEventListener('click', function () {
             var open = toggle.getAttribute('aria-expanded') !== 'true';
             toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
             body.hidden = !open;
             item.classList.toggle('is-open', open);
+            if (video && open && !video.getAttribute('src')) {
+                // Only on first open, so a sealed note downloads nothing.
+                // #t=0.001 makes iOS Safari paint the first frame instead
+                // of an empty box before she presses play.
+                video.src = note.video + '#t=0.001';
+            } else if (video && !open) {
+                // A hidden video would carry on playing its sound.
+                video.pause();
+            }
             if (open && badge) {
                 badge.remove();
                 badge = null;
