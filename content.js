@@ -84,7 +84,7 @@ const CONTENT = {
         { date: '2026-09-27', message: "Its the first day of your birthday week mailob! I look forward to your special day which is 4 days away. I hope this week is filled with lots of love and fun. I love you so much! Happy early birthday!", photo: 'assets/images/gettyvilla.jpeg' },
         { date: '2026-09-28', message: "5 things I love about you: Your work ethic is unmatched. You are very sweet. You are passionate about what you do. You are kind to others. You are an amazing partner. Happy Monday, I love you very much mailob!", photo: 'assets/images/beautiful.jpeg' },
         { date: '2026-09-29', message: "It is now Tuesday!!! I get to spend today with you even though we have to work first. I love you very much and I want you to know that we'll be eating some delicious food tonight! (; I'm so excited to be celebrating your birthday soon mailob!", photo: 'assets/images/sanfran.jpeg' },
-        { date: '2026-09-30', message: 'PLACEHOLDER — day four.', photo: null }
+        { date: '2026-09-30', message: 'PLACEHOLDER — day four.', photo: null, video: 'assets/video/mbaquarium.mp4' }
     ],
 
     /* ---------------------------------------------------------------

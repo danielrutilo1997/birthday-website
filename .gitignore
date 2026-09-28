@@ -1,0 +1,4 @@
+# Original phone videos: large, and they carry GPS location. Only the
+# converted .mp4 (see content.js) belongs on the public site.
+*.mov
+*.MOV
