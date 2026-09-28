@@ -245,7 +245,16 @@ device.
 
 KNOWN ISSUE (Oct 1 only): in the celebration state the two `top: 130%` balloons
 land on the daily-notes heading and a balloon string crosses the first
-note. Fix alongside Sprint 3's poppable balloons.
+note. Balloons also float over the birthday message text on a phone
+(seen 2026-09-28 at 390x844, covering "On this day ... amazing"). Fix
+alongside Sprint 3's poppable balloons.
+
+Birthday-screen preview (2026-09-28): `?preview=` with a date on or after
+the target day (e.g. `?preview=2026-10-01`) calls `celebrate()` at boot
+instead of starting the countdown, so the gallery and balloons can be
+checked without touching `targetDate`. Works from `file://` too. Earlier
+preview dates still show the live countdown. 26 checks in headless Chrome,
+including the real zero-crossing handoff with a faked clock.
 
 Sprint 2 (memory gallery) as built:
 

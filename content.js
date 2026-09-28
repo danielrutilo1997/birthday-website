@@ -19,6 +19,8 @@ const CONTENT = {
        --------------------------------------------------------------- */
 
     // Parsed with new Date(). Keep this exact format.
+    // Don't change this to test the birthday screen: add
+    // ?preview=2026-10-01 to the end of the address instead.
     targetDate: 'October 1, 2026 00:00:00',
 
     // Heading above the countdown clock.
@@ -95,7 +97,8 @@ const CONTENT = {
 
     memories: [
         // Sprint 2 reads this array. Add an entry and it appears in the
-        // gallery — no other file needs touching.
+        // gallery — no other file needs touching. The gallery only shows on
+        // the birthday; add ?preview=2026-10-01 to the address to see it now.
         //
         //   photo   (required) path relative to index.html
         //   caption (required) written on the BACK of the photo — she taps

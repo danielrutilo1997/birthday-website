@@ -593,9 +593,17 @@
 
     applyContent();
     initDailyNotes();
-    // No initGallery() here: celebrate() builds it once the countdown ends.
-    updateCountdown();
-    if (tickHandle === null && targetTime - new Date().getTime() >= 0) {
-        tickHandle = setInterval(updateCountdown, 1000);
+
+    // ?preview on or after the birthday shows the birthday screen, so Daniel
+    // can check the gallery and balloons without touching targetDate.
+    var preview = previewDay();
+    if (preview && preview >= dayKey(new Date(targetTime))) {
+        celebrate();
+    } else {
+        // No initGallery() here: celebrate() builds it once the countdown ends.
+        updateCountdown();
+        if (tickHandle === null && targetTime - new Date().getTime() >= 0) {
+            tickHandle = setInterval(updateCountdown, 1000);
+        }
     }
 }());
