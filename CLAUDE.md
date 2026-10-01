@@ -104,11 +104,13 @@ to add it to the gallery.
 
 Pick from, in priority order (cut from the bottom if time is short):
 
-1. [ ] **Poppable balloons** — click a balloon, it "pops" (scale+fade +
+1. [x] **Poppable balloons** — click a balloon, it "pops" (scale+fade +
    little burst animation) and reveals a short message or emoji. Reuses the
    existing `.balloon` elements; add click handler + a small pool of
    messages in `content.js` (`balloonMessages: ['...', '...']`).
-2. [ ] **Confetti cannon button** — a button she can press anytime to trigger
+   (Built 2026-09-30, see "Sprint 3 (poppable balloons) as built" below.
+   Daniel wrote the real `balloonMessages` the same day. Live.)
+2. [x] **Confetti cannon button** — a button she can press anytime to trigger
    a confetti burst, independent of the countdown finishing. Reuses existing
    confetti CSS/animation, just retriggers it on click instead of only on
    completion.
@@ -126,9 +128,12 @@ Done when: at least items 1-2 are shipped; 3-4 are stretch.
 Do last so it's polishing real content rather than placeholders.
 
 - [ ] Canvas fireworks burst on countdown completion (replace/augment the
-      current confetti-only reveal).
-- [ ] Animated falling petals (canvas or CSS), possibly retiring the static
-      `japan-sakura-flower...jpg` in favor of an animated version.
+      current confetti-only reveal). (Partly: since 2026-09-30 the cannon's
+      canvas confetti fires from both bottom corners when the birthday
+      screen appears. Confetti, not fireworks.)
+- [x] Animated falling petals (canvas or CSS), possibly retiring the static
+      `japan-sakura-flower...jpg` in favor of an animated version. (CSS,
+      built 2026-09-30. The jpg was never used by the site.)
 - [ ] Pass on colors/spacing/typography consistency across all new sections
       added in Sprints 1-3, so they read as one site, not bolted-on pieces.
 - [ ] Cross-device check: iPhone-size viewport (project has a documented
@@ -157,7 +162,12 @@ RESOLVED in the remote URL (checked 2026-09-27): origin now uses SSH
 access token was never revoked on GitHub, revoke it there — it was stored in
 plain text in `.git/config` for a while.
 
-## Where we left off (2026-09-27)
+## Where we left off (2026-09-30)
+
+SHIPPED 2026-09-30, about 9:30pm, a few hours before the birthday: poppable
+balloons, confetti cannon, tap-the-husky, falling petals, the daily-notes
+heading hidden on the birthday screen, Daniel's final birthday message and
+balloon messages, and the Laguna photo. All on `main`.
 
 LIVE since 2026-09-27 (commit 3ca3794): Sprints 0, 1 and 2 plus the
 countdown redesign are on `main`, which GitHub Pages publishes (legacy
@@ -180,6 +190,18 @@ Daniel runs `sudo xcodebuild -license` in Terminal.
 
 Sprint 1 (daily notes) as built:
 
+- BIRTHDAY SCREEN (added 2026-09-30, at Daniel's request): once
+  `celebrate()` has run, the heading ("A little something for today") is
+  hidden and nothing else: the four notes, the hint and the preview banner
+  all stay. `celebrate()` adds `.is-birthday` to `#daily`, and
+  `.daily.is-birthday .daily-heading` is `display: none`. A class rather
+  than emptying the heading, because `renderDailyNotes` runs again at the
+  midnight re-check and would put the text back. (A first version removed
+  the whole section; Daniel wanted the notes kept.) 15 checks in headless
+  Chrome with a faked clock: opened on the birthday, a page left open
+  across midnight, the midnight re-check, both previews, desktop. Note
+  that the midnight re-check rebuilds the list as it always has, so a note
+  she has open at 12:00:01 closes again.
 - Section sits between the main card and the gallery. Heading and the
   "come back tomorrow" teaser text come from `CONTENT.dailyHeading` /
   `CONTENT.dailyTeaser`.
@@ -243,11 +265,10 @@ choice). iPhones don't have Comic Sans, so on her phone it falls back to
 Dancing Script. The Comic Neue Google Font would give the same look on every
 device.
 
-KNOWN ISSUE (Oct 1 only): in the celebration state the two `top: 130%` balloons
-land on the daily-notes heading and a balloon string crosses the first
-note. Balloons also float over the birthday message text on a phone
-(seen 2026-09-28 at 390x844, covering "On this day ... amazing"). Fix
-alongside Sprint 3's poppable balloons.
+FIXED 2026-09-30 (was the "Oct 1 only" known issue): balloons used to sit
+at a percentage of the screen height, so on a phone they covered the
+birthday message and the two `top: 130%` ones landed on the daily-notes
+heading. They are now anchored to rows inside the card; see Sprint 3 below.
 
 Birthday-screen preview (2026-09-28): `?preview=` with a date on or after
 the target day (e.g. `?preview=2026-10-01`) calls `celebrate()` at boot
@@ -310,15 +331,115 @@ Two layout changes worth knowing about:
 - `body` is now `flex-direction: column`. It had to be: the gallery is a
   second in-flow child and would otherwise sit beside the card rather than
   under it. With a single child the rendering is equivalent.
-- The page is now taller, which may change where the two `top: 130%` balloons
-  land relative to the fold once the countdown finishes. Balloons only show
-  in the celebration state, so this needs a look in that state specifically.
+- The page is taller than it was. This no longer affects the balloons,
+  which are anchored to rows in the card since 2026-09-30.
 
-Still open from Sprint 0: the `.confetti:nth-child(N)` off-by-two bug is
-unfixed. (`CONTENT.targetDate` is back to 'October 1, 2026 00:00:00' and
-live. If it's set to a past date for local testing, it must never be pushed
-that way.)
+Sprint 3 (poppable balloons) as built, 2026-09-30:
 
-Next: replace the 9/30 note and ship it (commit, merge to `main`, push,
-confirm the Pages build), then Sprint 3 (poppable balloons + confetti cannon
-button, and the balloon overlap above).
+- The six balloons are `<button class="balloon balloon-N">` inside the
+  card, two per `.balloon-row` (the title, the centre flower, the husky).
+  Each row is `position: relative`, so the balloons follow the artwork at
+  every width instead of a percentage of the screen height. On a phone they
+  overhang the card edge; from 600px the flower pair moves in beside the
+  flower (the title is two lines there, so the title pair's strings reach
+  that row); from 900px all six sit out on the blue either side.
+- `initBalloons()` runs from `celebrate()` (guarded to run once). Balloons
+  never show during the countdown, and the countdown layout is unchanged
+  from before (measured against the previous commit at 390 and 1280).
+- Messages come from `CONTENT.balloonMessages`. Entries that are empty or
+  still start with `PLACEHOLDER` are skipped with a console warning. With
+  no real messages the balloons are disabled decoration: no hint, nothing
+  happens on tap.
+- A pop: the balloon scales up and fades in 0.12s, eight dots in its colour
+  fly out, and the message appears where it was in a white tag with the
+  balloon's colour as its border, pulled in 12px from the screen edge. One
+  message at a time (a second pop closes the first). It leaves by itself
+  after 3.5s + 60ms per character (9s at most), or when tapped. The balloon
+  grows back 2.5s after its message leaves.
+- Messages are dealt like a shuffled deck: every one once before any
+  repeat, and never the same one twice in a row.
+- The pop uses the individual `scale` property, not `transform`, because
+  the float animation owns `transform`; mixing them made a popped balloon
+  jump back to where its float started. Needs Safari 14.1+.
+- "tap a balloon..." sits under the husky (negative top margin, so
+  the card is no taller). `#balloon-live` is an `aria-live` region that
+  reads the message out. A popped balloon is `disabled` until it returns.
+- Reduced motion: no float (as before), the pop and return are instant, no
+  burst, the message appears without animation.
+- The `.confetti:nth-child(N)` off-by-two bug from Sprint 0 is fixed as part
+  of this: the confetti are now the first six children of `<body>`, and all
+  six get their column and colour (only four did before).
+
+Verified 2026-09-30 in headless Chrome, with real-looking messages patched
+into `content.js` by the test harness: 55 checks, all pass, screenshots
+reviewed. Balloons (with strings, sampled across a full float cycle) stay
+clear of the title, message, flowers, husky, daily notes and each other at
+360, 375, 390, 430, 768, 900, 1280 and 1920 wide; no sideways scroll;
+touch tap, tap-to-dismiss, auto-dismiss, grow-back, deck order, Enter key,
+placeholder-only content, countdown state, reduced motion. NOT checked: a
+real iPhone, Safari, or Firefox (headless Firefox would not start here).
+
+Confetti cannon, tap-the-husky and falling petals as built, 2026-09-30:
+
+- Cannon: `#cannon`, a round 56px button fixed at the bottom right, on the
+  birthday screen only (it starts `hidden`; `celebrate()` reveals it — it
+  showed during the countdown at first, Daniel asked for that to go),
+  hidden while the lightbox is open. It is
+  not the old looping `.confetti` squares, which still fall as before; it
+  draws on `#cannon-canvas`, one fixed full-screen canvas (`pointer-events:
+  none`, z-index 40, bitmap capped at 2x). `fireConfetti(x, y, angle,
+  count)` in `script.js` adds pieces; the `requestAnimationFrame` loop runs
+  only while pieces are in the air, then hides the canvas. At most 400
+  pieces however fast she taps. Launch speed scales with screen height.
+- `celebrationBurst()` runs from `celebrate()`: 70 pieces from each bottom
+  corner, both at the real zero-crossing and when the page is opened on
+  the birthday.
+- Known trade-off: on a phone the button sits over the right-hand end of
+  whichever daily note is at the bottom of the screen (its chevron) until
+  she scrolls.
+- Husky: `#husky` is `role="button" tabindex="0"` (a div, same Firefox
+  reason as `#print-stage`). Tap, Enter or Space: the image wiggles
+  (`.is-happy`, on the `<img>` because the wrapper's transform is the
+  bounce) and six heart emoji float up from its head, added to `<body>` and
+  removed after about 1.7s. No hint; it is an easter egg.
+- Petals: `initPetals()` scatters 12-24 `.petal` spans (one per ~55px of
+  width) into `#petals`, a fixed `pointer-events: none` layer at z-index 2,
+  in every state. All the motion is CSS (`petalFall` on the span,
+  `petalSway` on its `::before`), transforms only. Pinks come from
+  `flower.png` (#f8c8c8, #f898a8).
+- Reduced motion: petals, the cannon button and its canvas are all
+  `display: none`, and `fireConfetti` returns early. The husky still gives
+  hearts, which sit still and then disappear; no wiggle.
+
+Verified 2026-09-30 in headless Chrome: 40 more checks, all pass, on top
+of a clean re-run of the 55 balloon checks, screenshots reviewed. (With
+the daily-notes checks above, 112 in total at the end of 2026-09-30.) Covers touch and mouse on the cannon, 40 presses at once still
+at 60fps, a balloon popping under flying confetti, the canvas clearing,
+husky by touch and keyboard, petals falling and never taking a tap,
+countdown state, desktop, reduced motion. Daniel's seven real balloon
+messages were also run through as written. NOT checked: a real iPhone,
+Safari, or Firefox.
+
+`CONTENT.targetDate`: Daniel moved it to past times on Sept 30 while testing
+and put it back to 'October 1, 2026 00:00:00' before this was shipped. Same
+rule as ever: it must never be pushed set to a past date, and
+`?preview=2026-10-01` shows the birthday screen without touching it.
+
+Daniel also rewrote `birthdayMessage` on 2026-09-30 (about three times as
+long) and set `.message` to `font-size: 1.6em` to suit it; the card is
+about 1650px tall on a phone. The balloons needed one small nudge for it
+(`.balloon-4` up 8px) and are otherwise unaffected, since they hang off rows
+rather than screen height. The full suite (112 checks) was re-run against
+the final files just before shipping: all pass.
+
+OPEN, for Daniel to decide: five of the photos in `assets/images/` still
+carry GPS coordinates in their EXIF data (`amazing.jpeg`, `usinthecar.jpeg`,
+`gettyvilla.jpeg`, `us.jpeg`, and `laguna.jpeg`). The repo and site are
+public. The first four have been public since 2026-09-27, so stripping them
+now would not remove the coordinates from git history without a rewrite.
+Check any new photo with `mdls -name kMDItemLatitude <file>` before adding
+it.
+
+Next: Daniel checks the live site on a real iPhone (nothing here has been
+verified by Claude outside headless Chrome). Still unbuilt from the plan:
+scratch-off card, memory-match game, canvas fireworks.

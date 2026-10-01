@@ -40,8 +40,24 @@ const CONTENT = {
     },
 
     // The big reveal message. Shown when the countdown hits zero.
-    birthdayMessage: "On this day, an amazing, beautiful and wonderful girl was born. I hope this year brings you everything you've ever wanted because you deserve it. Here's to making so many more wonderful memories with you Casandra! I love you!",
-    /* Another wonderful year goes by that I got to spend with you mailob. I love you so very much! */
+    /* 2025
+    birthdayMessage: "On this day, an amazing, beautiful and wonderful girl was born. I hope this year brings you everything you've ever 
+    wanted because you deserve it. Here's to making so many more wonderful memories with you Casandra! I love you!", */
+
+    /* 2026 
+    Another wonderful year goes by that I got to spend with you Casandra. Everyday I wake up and look forward to exchanging a good morning text with you. 
+    I enjoy car pooling with you to work when our schedules align and getting Boiling Point on the least expected days. I enjoy eating breakfast with you, 
+    going for a swim together (thank you for teaching me how to swim), and then taking Luna for a walk. Those are cherished days that I will always hold
+    dear. You are my partner, mailob and my best friend. I love you so very much! Here's to another year of making more memories. I hope you have a 
+    wonderful day today and look forward to seeing you later.
+    */
+
+    birthdayMessage: "Another wonderful year goes by that I got to spend with you Casandra. Everyday I wake up and look forward to exchanging a good morning text with you." + 
+    " I enjoy car pooling with you to work when our schedules align and getting Boiling Point on the least expected days. I enjoy eating breakfast with you, " +
+    "going for a swim together (thank you for teaching me how to swim), and then taking Luna for a walk. Those are cherished days that I will always hold" + 
+    " dear. You are my partner, mailob and my best friend. I love you so very much! Here's to another year of making more memories. I hope you have a " +
+    "wonderful day today and look forward to seeing you later.",
+    
     // Heading above the memory gallery (Sprint 2).
     galleryHeading: 'A few memories from this past year.',
 
@@ -55,6 +71,9 @@ const CONTENT = {
        newest first. A note unlocks at midnight on its date — by the
        clock on HER phone — and stays visible afterwards. Each one
        arrives sealed with a "new!" badge until she taps it open.
+
+       Once the countdown finishes, the notes are still there on the
+       birthday screen, but the heading above them is not shown.
 
          date    (required) 'YYYY-MM-DD'
          message (required) the note. Use \n to start a new line.
@@ -137,8 +156,8 @@ const CONTENT = {
             date: '2026-06-25'
         },
         {
-            photo: 'assets/images/beautiful.jpeg',
-            caption: 'Model on a rock.\nDecember 19th, 2025',
+            photo: 'assets/images/laguna.jpeg',
+            caption: 'Taking pictures with you. \nAugust 17th, 2026',
             date: '2025-12-19'
         },
         {
@@ -149,15 +168,35 @@ const CONTENT = {
     ],
 
     /* ---------------------------------------------------------------
-       Sprint 3 — Poppable balloons (structure not built yet)
+       Sprint 3 — Poppable balloons
 
-       Short strings or emoji. One is picked per balloon popped.
+       On the birthday screen she can tap a balloon to pop it. Each
+       pop shows one of these, picked at random; she sees every one
+       once before any repeats, and the balloons grow back so she can
+       keep going. Add as many as you like.
+
+       Keep them short: a few words or an emoji. A long sentence still
+       fits, it just makes a tall bubble on a phone. \n starts a new
+       line.
+
+       Anything still starting with PLACEHOLDER is skipped, so she can
+       never see one. With no real messages here the balloons are
+       plain decoration and don't pop.
+
+       To try them before the day, add ?preview=2026-10-01 to the end
+       of the address.
        --------------------------------------------------------------- */
 
     balloonMessages: [
         // PLACEHOLDER
-        'PLACEHOLDER — a short sweet line.',
-        'PLACEHOLDER — another one.',
-        'PLACEHOLDER — and one more.'
+        'Happy Birthday!',
+        'Life is too short, but I will live for you.',
+        'I love you!',
+        'But I really want pasta.',
+        'ooglie booglie',
+        'tu no me embarazas',
+        'te amo mucho mailob',
+        'One free bacio di latte',
+        'Popped by a beautiful girl'
     ]
 };

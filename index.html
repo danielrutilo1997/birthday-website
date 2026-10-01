@@ -12,12 +12,6 @@
 </head>
 
 <body>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
     <div class="confetti"></div>
     <div class="confetti"></div>
     <div class="confetti"></div>
@@ -26,8 +20,20 @@
     <div class="confetti"></div>
 
     <div class="container">
-        <h1 id="title"></h1>
-        <img src="assets/images/flower.png" class="flower-img flower-center" alt="Flower">
+        <!-- Balloons (Sprint 3) only show on the birthday screen. Each pair
+             hangs off the row it sits in, so they stay beside the title,
+             flower and husky at every screen size. script.js makes them
+             poppable when CONTENT.balloonMessages has something to say. -->
+        <div class="balloon-row">
+            <h1 id="title"></h1>
+            <button type="button" class="balloon balloon-1" aria-label="Pop this balloon"></button>
+            <button type="button" class="balloon balloon-2" aria-label="Pop this balloon"></button>
+        </div>
+        <div class="balloon-row">
+            <img src="assets/images/flower.png" class="flower-img flower-center" alt="Flower">
+            <button type="button" class="balloon balloon-3" aria-label="Pop this balloon"></button>
+            <button type="button" class="balloon balloon-4" aria-label="Pop this balloon"></button>
+        </div>
         <img src="assets/images/flower.png" class="flower-img flower-top-left" alt="Flower">
         <img src="assets/images/flower.png" class="flower-img flower-top-right" alt="Flower">
         <img src="assets/images/flower.png" class="flower-img flower-bottom-left" alt="Flower">
@@ -59,9 +65,19 @@
             </div>
         </div>
         <div class="message" id="message"></div>
-        <div class="husky">
-            <img id="husky-img" src="" alt="">
+        <div class="balloon-row">
+            <!-- Tap the husky for a wiggle and a few hearts. A div with
+                 role="button" for the same reason as the photo print below:
+                 Firefox lays out a real <button>'s contents differently. -->
+            <div class="husky" id="husky" role="button" tabindex="0" aria-label="Pet the husky">
+                <img id="husky-img" src="" alt="">
+            </div>
+            <button type="button" class="balloon balloon-5" aria-label="Pop this balloon"></button>
+            <button type="button" class="balloon balloon-6" aria-label="Pop this balloon"></button>
         </div>
+        <p class="balloon-hint" id="balloon-hint" hidden>tap a balloon...</p>
+        <!-- Reads a popped balloon's message out to screen readers. -->
+        <p class="sr-only" id="balloon-live" aria-live="polite"></p>
     </div>
 
     <!-- Daily notes (Sprint 1). Notes are built by script.js from
@@ -104,6 +120,16 @@
         </div>
         <p class="lightbox-hint">tap the photo to turn it over</p>
     </div>
+
+    <!-- Falling petals. script.js fills this in; they are decoration only
+         and never take a tap. -->
+    <div class="petals" id="petals" aria-hidden="true"></div>
+
+    <!-- Confetti cannon (Sprint 3): the button, and the canvas its confetti
+         is drawn on. The button only appears on the birthday screen; the
+         canvas is only shown while confetti is in the air. -->
+    <button type="button" class="cannon" id="cannon" aria-label="Fire the confetti cannon" hidden>🎉</button>
+    <canvas class="cannon-canvas" id="cannon-canvas" aria-hidden="true" hidden></canvas>
 
     <script src="content.js"></script>
     <script src="script.js"></script>

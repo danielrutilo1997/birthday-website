@@ -35,9 +35,14 @@
 
         document.querySelector('.husky').style.display = 'block';
 
-        document.querySelectorAll('.balloon').forEach(function (balloon) {
-            balloon.style.display = 'block';
-        });
+        // "A little something for today" no longer fits once the day has
+        // come: the notes stay, their heading goes (see style.css).
+        document.getElementById('daily').classList.add('is-birthday');
+
+        initBalloons();
+        // The cannon is a birthday thing: no button during the countdown.
+        document.getElementById('cannon').hidden = false;
+        celebrationBurst();
 
         document.querySelectorAll('.confetti').forEach(function (conf) {
             conf.style.display = 'block';
@@ -589,10 +594,379 @@
 
         return { open: open, close: close };
     }
+
+    /* --- poppable balloons (Sprint 3) ------------------------------------
+
+       Driven by CONTENT.balloonMessages. Tapping a balloon pops it and
+       leaves one of the messages where it was. The balloon grows back a
+       little later, so she can keep going until she has read them all.
+       ------------------------------------------------------------------ */
+
+    var NOTE_EDGE = 12;       // px kept between a message and the screen edge
+    var REFILL_DELAY = 2500;  // ms from a message leaving to its balloon returning
+
+    // Real messages only. Anything still marked PLACEHOLDER is left out, so
+    // an unfinished content.js can never put that word in front of her.
+    function readBalloonMessages() {
+        return (CONTENT.balloonMessages || []).filter(function (text) {
+            if (typeof text !== 'string' || text.trim() === '') { return false; }
+            if (/^\s*PLACEHOLDER/.test(text)) {
+                console.warn('Skipping placeholder balloon message:', text);
+                return false;
+            }
+            return true;
+        });
+    }
+
+    // Deals every message once, in a random order, before any repeats.
+    function makeDeck(messages) {
+        var pile = [];
+        var last = null;
+        return function () {
+            if (pile.length === 0) {
+                pile = messages.slice();
+                for (var i = pile.length - 1; i > 0; i--) {
+                    var j = Math.floor(Math.random() * (i + 1));
+                    var swap = pile[i];
+                    pile[i] = pile[j];
+                    pile[j] = swap;
+                }
+                // Don't open a new round with the one she has just read.
+                if (pile.length > 1 && pile[pile.length - 1] === last) {
+                    pile.unshift(pile.pop());
+                }
+            }
+            last = pile.pop();
+            return last;
+        };
+    }
+
+    var balloonsReady = false;
+
+    // Called from celebrate(): balloons only exist on the birthday screen.
+    function initBalloons() {
+        if (balloonsReady) { return; }
+        balloonsReady = true;
+
+        var balloons = document.querySelectorAll('.balloon');
+        balloons.forEach(function (balloon) {
+            balloon.style.display = 'block';
+        });
+
+        // No messages yet: the balloons stay as decoration, nothing to tap.
+        var messages = readBalloonMessages();
+        if (messages.length === 0) {
+            balloons.forEach(function (balloon) {
+                balloon.disabled = true;
+                balloon.setAttribute('aria-hidden', 'true');
+            });
+            return;
+        }
+
+        var nextMessage = makeDeck(messages);
+        var live = document.getElementById('balloon-live');
+        var openNote = null; // the message on screen, if any
+
+        // A few dots flying outwards from where the balloon was.
+        function burst(x, y, colour) {
+            var box = document.createElement('div');
+            box.className = 'balloon-burst';
+            box.style.left = x + 'px';
+            box.style.top = y + 'px';
+            for (var i = 0; i < 8; i++) {
+                var angle = (i + Math.random() * 0.6) * Math.PI / 4;
+                var reach = 38 + Math.random() * 22;
+                var dot = document.createElement('i');
+                dot.style.background = colour;
+                dot.style.setProperty('--dx', Math.round(Math.cos(angle) * reach) + 'px');
+                dot.style.setProperty('--dy', Math.round(Math.sin(angle) * reach) + 'px');
+                box.appendChild(dot);
+            }
+            document.body.appendChild(box);
+            setTimeout(function () { box.remove(); }, 600);
+        }
+
+        function closeNote() {
+            if (!openNote) { return; }
+            var note = openNote;
+            openNote = null;
+            clearTimeout(note.timer);
+            note.el.classList.add('is-leaving');
+            setTimeout(function () { note.el.remove(); }, 300);
+            note.onGone();
+        }
+
+        // One message at a time: two side by side would overlap on a phone.
+        function showNote(text, x, y, colour, onGone) {
+            closeNote();
+
+            var el = document.createElement('p');
+            el.className = 'balloon-note';
+            el.textContent = text;
+            el.style.borderColor = colour;
+            document.body.appendChild(el);
+
+            // Centred on the balloon, then pulled in from the screen edge.
+            var width = el.offsetWidth;
+            var maxLeft = document.documentElement.clientWidth - width - NOTE_EDGE;
+            el.style.left = Math.max(NOTE_EDGE, Math.min(x - width / 2, maxLeft)) + 'px';
+            el.style.top = (y - el.offsetHeight / 2) + 'px';
+
+            // She can tap it away; otherwise it stays long enough to read.
+            el.addEventListener('click', closeNote);
+            openNote = {
+                el: el,
+                onGone: onGone,
+                timer: setTimeout(closeNote, Math.min(9000, 3500 + text.length * 60))
+            };
+            live.textContent = text;
+        }
+
+        function refill(balloon) {
+            // Tiny with the transition off, then let it grow back.
+            balloon.classList.add('is-empty');
+            balloon.classList.remove('is-popped');
+            void balloon.offsetWidth;
+            balloon.classList.remove('is-empty');
+            balloon.disabled = false;
+        }
+
+        function pop(balloon) {
+            // Where it is right now, mid-float, in page coordinates.
+            var box = balloon.getBoundingClientRect();
+            var x = box.left + box.width / 2 + window.scrollX;
+            var y = box.top + box.height / 2 + window.scrollY;
+            var colour = window.getComputedStyle(balloon).backgroundColor;
+
+            // Disabled while it is gone, so the keyboard can't pop thin air.
+            balloon.disabled = true;
+            balloon.classList.add('is-popped');
+            burst(x, y, colour);
+            showNote(nextMessage(), x, y, colour, function () {
+                setTimeout(function () { refill(balloon); }, REFILL_DELAY);
+            });
+        }
+
+        balloons.forEach(function (balloon) {
+            balloon.addEventListener('click', function () { pop(balloon); });
+        });
+        document.getElementById('balloon-hint').hidden = false;
+    }
+
+    /* --- confetti cannon (Sprint 3) --------------------------------------
+
+       A button she can press whenever she likes once the birthday screen
+       is up; the same confetti also goes off by itself as it appears. Every piece is
+       drawn on one canvas laid over the screen, and the loop only runs
+       while something is in the air.
+       ------------------------------------------------------------------ */
+
+    var CONFETTI_COLOURS = ['#ff6b6b', '#4ecdc4', '#ffe66d', '#a8e6cf', '#667eea', '#ff8e53'];
+    var MAX_PIECES = 400; // however fast she taps
+
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    var cannonCanvas = null;
+    var cannonCtx = null;
+    var cannonFrame = null;
+    var cannonLast = 0;
+    var pieces = [];
+
+    function sizeCannonCanvas() {
+        // Capped at 2x: sharp enough, and under half the pixels of a 3x phone.
+        var ratio = Math.min(window.devicePixelRatio || 1, 2);
+        cannonCanvas.width = Math.round(cannonCanvas.clientWidth * ratio);
+        cannonCanvas.height = Math.round(cannonCanvas.clientHeight * ratio);
+        cannonCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    }
+
+    function drawConfetti(now) {
+        // Counted in 60ths of a second, so the arc is the same on a 120Hz
+        // screen, and capped so a paused tab doesn't fling everything away.
+        var step = Math.min((now - cannonLast) / (1000 / 60), 3);
+        cannonLast = now;
+
+        var floor = cannonCanvas.clientHeight + 20;
+        var drag = Math.pow(0.985, step);
+        cannonCtx.clearRect(0, 0, cannonCanvas.clientWidth, cannonCanvas.clientHeight);
+
+        pieces = pieces.filter(function (piece) {
+            piece.vx *= drag;
+            piece.vy = piece.vy * drag + 0.25 * step; // gravity
+            piece.x += piece.vx * step;
+            piece.y += piece.vy * step;
+            piece.turn += piece.spin * step;
+            piece.flip += piece.flutter * step;
+            piece.age += step;
+            if (piece.y > floor || piece.age > 420) { return false; }
+
+            cannonCtx.save();
+            cannonCtx.translate(piece.x, piece.y);
+            cannonCtx.rotate(piece.turn);
+            // Squashing it back and forth reads as paper tumbling.
+            cannonCtx.scale(1, Math.cos(piece.flip));
+            cannonCtx.fillStyle = piece.colour;
+            cannonCtx.fillRect(-piece.w / 2, -piece.h / 2, piece.w, piece.h);
+            cannonCtx.restore();
+            return true;
+        });
+
+        if (pieces.length > 0) {
+            cannonFrame = window.requestAnimationFrame(drawConfetti);
+        } else {
+            cannonFrame = null;
+            cannonCanvas.hidden = true;
+        }
+    }
+
+    // Throws `count` pieces from (x, y) on the screen towards `angle`, in
+    // radians (straight up is -PI / 2).
+    function fireConfetti(x, y, angle, count) {
+        if (reducedMotion.matches) { return; }
+
+        if (!cannonCanvas) {
+            cannonCanvas = document.getElementById('cannon-canvas');
+            cannonCtx = cannonCanvas.getContext('2d');
+            window.addEventListener('resize', function () {
+                if (cannonFrame !== null) { sizeCannonCanvas(); }
+            });
+        }
+        if (cannonFrame === null) {
+            cannonCanvas.hidden = false;
+            sizeCannonCanvas();
+        }
+
+        // Harder on a taller screen, so it always climbs most of the way up.
+        var power = Math.sqrt(cannonCanvas.clientHeight / 800);
+        count = Math.min(count, MAX_PIECES - pieces.length);
+        for (var i = 0; i < count; i++) {
+            var aim = angle + (Math.random() - 0.5) * 1.1;
+            var speed = (10 + Math.random() * 17) * power;
+            pieces.push({
+                x: x,
+                y: y,
+                vx: Math.cos(aim) * speed,
+                vy: Math.sin(aim) * speed,
+                w: 6 + Math.random() * 5,
+                h: 4 + Math.random() * 4,
+                colour: CONFETTI_COLOURS[Math.floor(Math.random() * CONFETTI_COLOURS.length)],
+                turn: Math.random() * Math.PI * 2,
+                spin: (Math.random() - 0.5) * 0.4,
+                flip: Math.random() * Math.PI * 2,
+                flutter: 0.1 + Math.random() * 0.2,
+                age: 0
+            });
+        }
+
+        if (cannonFrame === null && pieces.length > 0) {
+            cannonLast = window.performance.now();
+            cannonFrame = window.requestAnimationFrame(drawConfetti);
+        }
+    }
+
+    // Aimed at the top middle of the screen from wherever it starts.
+    function aimAtTop(x, y) {
+        return Math.atan2(window.innerHeight * 0.15 - y, window.innerWidth / 2 - x);
+    }
+
+    // One from each bottom corner as the birthday screen appears.
+    function celebrationBurst() {
+        var bottom = window.innerHeight;
+        [0, window.innerWidth].forEach(function (x) {
+            fireConfetti(x, bottom, aimAtTop(x, bottom), 70);
+        });
+    }
+
+    function initCannon() {
+        var button = document.getElementById('cannon');
+        button.addEventListener('click', function () {
+            var box = button.getBoundingClientRect();
+            var x = box.left + box.width / 2;
+            var y = box.top + box.height / 2;
+            fireConfetti(x, y, aimAtTop(x, y), 80);
+
+            button.classList.remove('is-firing');
+            void button.offsetWidth; // restart the kick
+            button.classList.add('is-firing');
+        });
+    }
+
+    /* --- tap the husky --------------------------------------------------- */
+
+    var HEARTS = ['❤️', '💕', '💖', '💗'];
+
+    function initHusky() {
+        var husky = document.getElementById('husky');
+
+        function pet() {
+            husky.classList.remove('is-happy');
+            void husky.offsetWidth; // restart the wiggle
+            husky.classList.add('is-happy');
+
+            // Scattered around its head, in page coordinates.
+            var box = husky.getBoundingClientRect();
+            for (var i = 0; i < 6; i++) {
+                var heart = document.createElement('span');
+                heart.className = 'husky-heart';
+                heart.setAttribute('aria-hidden', 'true');
+                heart.textContent = HEARTS[Math.floor(Math.random() * HEARTS.length)];
+                heart.style.left = (box.left + window.scrollX + box.width * (0.2 + Math.random() * 0.5)) + 'px';
+                heart.style.top = (box.top + window.scrollY + box.height * (0.05 + Math.random() * 0.3)) + 'px';
+                heart.style.fontSize = Math.round(16 + Math.random() * 14) + 'px';
+                heart.style.setProperty('--dx', Math.round((Math.random() - 0.5) * 90) + 'px');
+                heart.style.setProperty('--dy', Math.round(-80 - Math.random() * 70) + 'px');
+                heart.style.animationDelay = (i * 70) + 'ms';
+                document.body.appendChild(heart);
+                removeLater(heart, 1300 + i * 70);
+            }
+        }
+
+        husky.addEventListener('click', pet);
+        husky.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ' || event.key === 'Spacebar') {
+                // Space would otherwise scroll the page.
+                event.preventDefault();
+                pet();
+            }
+        });
+    }
+
+    function removeLater(el, ms) {
+        setTimeout(function () { el.remove(); }, ms);
+    }
+
+    /* --- falling petals (Sprint 4) ---------------------------------------
+
+       Only scatters them; style.css does the falling. One petal per slice
+       of the screen's width, so they never bunch up on one side.
+       ------------------------------------------------------------------ */
+
+    function initPetals() {
+        var layer = document.getElementById('petals');
+        var count = Math.max(12, Math.min(24, Math.round(window.innerWidth / 55)));
+
+        for (var i = 0; i < count; i++) {
+            var fall = 9 + Math.random() * 8;
+            var petal = document.createElement('span');
+            petal.className = 'petal';
+            petal.style.setProperty('--x', ((i + Math.random()) / count * 100).toFixed(1) + '%');
+            petal.style.setProperty('--size', Math.round(10 + Math.random() * 8) + 'px');
+            petal.style.setProperty('--fall', fall.toFixed(1) + 's');
+            // Negative, so each is already part-way down when the page opens.
+            petal.style.setProperty('--delay', (-Math.random() * fall).toFixed(1) + 's');
+            petal.style.setProperty('--sway', Math.round(15 + Math.random() * 35) + 'px');
+            petal.style.setProperty('--sway-time', (2.5 + Math.random() * 2.5).toFixed(1) + 's');
+            layer.appendChild(petal);
+        }
+    }
+
     /* --- boot -------------------------------------------------------- */
 
     applyContent();
     initDailyNotes();
+    initCannon();
+    initHusky();
+    initPetals();
 
     // ?preview on or after the birthday shows the birthday screen, so Daniel
     // can check the gallery and balloons without touching targetDate.

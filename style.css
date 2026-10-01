@@ -99,7 +99,7 @@ h1 {
 }
 
 .message {
-    font-size: 2.0em;
+    font-size: 1.6em;
     font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
     color: #c91515;
     line-height: 1.6;
@@ -127,13 +127,44 @@ h1 {
     }
 }
 
+/* ---------------------------------------------------------------
+   Balloons (Sprint 3)
+
+   Birthday screen only. Each pair hangs off a .balloon-row (title,
+   flower, husky) rather than a percentage of the screen height, so
+   they sit beside the artwork on every screen instead of landing on
+   whatever text happens to be there. On a phone they overhang the
+   edge of the card; from 900px up they drift out onto the blue.
+
+   They are <button>s: script.js pops one on tap and shows a message
+   from CONTENT.balloonMessages in its place.
+   --------------------------------------------------------------- */
+
+.balloon-row {
+    position: relative;
+}
+
 .balloon {
     position: absolute;
     width: 50px;
     height: 70px;
+    border: none;
     border-radius: 50%;
+    -webkit-appearance: none;
+    appearance: none;
+    /* The string hangs outside the button's own box. */
+    overflow: visible;
+    cursor: pointer;
+    /* No grey flash, and no double-tap zoom when she pops two quickly. */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     animation: float 6s ease-in-out infinite;
-    z-index: 1;
+    /* `scale`, not transform: the float animation owns transform, so a
+       popped balloon would otherwise jump back to where its float began.
+       This transition is the balloon growing back. */
+    transition: scale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease-out;
+    /* Above the message text (3), which they never overlap at rest. */
+    z-index: 4;
     display: none;
 }
 
@@ -148,6 +179,37 @@ h1 {
     transform: translateX(-50%);
 }
 
+/* No messages in content.js: plain decoration, nothing to tap. */
+.balloon:disabled {
+    cursor: default;
+}
+
+.balloon:focus-visible {
+    outline: 3px solid #4ecdc4;
+    outline-offset: 3px;
+}
+
+@media (hover: hover) {
+    .balloon:not(:disabled):hover {
+        scale: 1.08;
+    }
+}
+
+.balloon.is-popped {
+    scale: 1.5;
+    opacity: 0;
+    pointer-events: none;
+    transition: scale 0.12s ease-out, opacity 0.12s ease-out;
+}
+
+/* One frame of "tiny" with the transition off, so the balloon grows back
+   from nothing instead of shrinking back from its popped size. */
+.balloon.is-empty {
+    scale: 0.1;
+    opacity: 0;
+    transition: none;
+}
+
 @keyframes float {
     0%, 100% {
         transform: translateY(0) rotate(0deg);
@@ -157,77 +219,332 @@ h1 {
     }
 }
 
-.balloon:nth-child(1) {
+/* Title row. Low enough to clear the corner flowers at the top of the
+   float, far enough out to clear the title's second line. */
+.balloon-1 {
     background: #ff6b6b;
-    left: 8%;
-    top: 15%;
+    left: -30px;
+    top: 80px;
     animation-delay: 0s;
-    z-index: 2;
 }
 
-.balloon:nth-child(2) {
+.balloon-2 {
     background: #4ecdc4;
-    right: 7%;
-    left: auto;
-    top: 25%;
+    right: -30px;
+    top: 96px;
     animation-delay: 1s;
-    z-index: 2;
 }
 
-.balloon:nth-child(3) {
+/* Flower row. Raised so the strings stop short of the message. */
+.balloon-3 {
     background: #ffe66d;
-    left: 17%;
-    top: 45%;
+    left: -6px;
+    top: -30px;
     animation-delay: 2s;
-    z-index: 2;
 }
 
-.balloon:nth-child(4) {
+.balloon-4 {
     background: #129464;
-    right: 12%;
-    left: auto;
-    top: 48%;
+    right: -8px;
+    top: -28px;
     animation-delay: 1.5s;
-    z-index: 2;
 }
 
-.balloon:nth-child(5) {
+/* Husky row. The strings end above the bottom corner flowers. */
+.balloon-5 {
     background: #667eea;
-    left: 18%;
-    bottom: auto;
-    top: 130%;
+    left: -26px;
+    top: 24px;
     animation-delay: 0.5s;
-    z-index: 2;
 }
 
-.balloon:nth-child(6) {
+.balloon-6 {
     background: #ff8e53;
-    right: 15%;
-    left: auto;
-    bottom: auto;
-    top: 130%;
+    right: -26px;
+    top: 40px;
     animation-delay: 1.8s;
-    z-index: 2;
 }
-@media (max-width: 600px) {
-      .balloon:nth-child(3) {   /* yellow */
-          left: 18%;
-          top: 54%;
-      }
 
-      .balloon:nth-child(4) {   /* green */
-          right: 10%;
-          top: 60%;
-      }
-      .balloon:nth-child(5) {   /* blue */
-          left: 18%;
-          top: 165%;
-      }
-      .balloon:nth-child(6) {   /* orange */
-          right: 15%;
-          top: 160%;
-      }
-  }
+/* The wider card: the title is two lines, not three, so the title pair's
+   strings reach the flower row. Its pair moves in beside the flower, and
+   the corner flowers are bigger, so the first balloon drops a little. */
+@media (min-width: 600px) {
+    .balloon-1 {
+        top: 90px;
+    }
+
+    .balloon-3 {
+        left: 70px;
+        top: -20px;
+    }
+
+    .balloon-4 {
+        right: 60px;
+        top: -6px;
+    }
+}
+
+/* Room either side of the card: out onto the blue. */
+@media (min-width: 900px) {
+    .balloon-1 {
+        left: -150px;
+        top: 30px;
+    }
+
+    .balloon-2 {
+        right: -135px;
+        top: 70px;
+    }
+
+    .balloon-3 {
+        left: -110px;
+        top: 40px;
+    }
+
+    .balloon-4 {
+        right: -165px;
+        top: 30px;
+    }
+
+    .balloon-5 {
+        left: -160px;
+        top: 10px;
+    }
+
+    .balloon-6 {
+        right: -115px;
+        top: 60px;
+    }
+}
+
+.balloon-hint {
+    position: relative;
+    z-index: 2;
+    /* Tucked into the gap under the husky, so the card is no taller. */
+    margin-top: -16px;
+    color: #2d2d44;
+    opacity: 0.7;
+    font-size: 0.85em;
+    letter-spacing: 0.04em;
+}
+
+/* What a popped balloon leaves behind. script.js adds both to <body> at
+   the balloon's position and removes them again afterwards. */
+.balloon-burst {
+    position: absolute;
+    z-index: 20;
+    pointer-events: none;
+}
+
+.balloon-burst i {
+    position: absolute;
+    left: -4px;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: balloonBurst 0.5s ease-out forwards;
+}
+
+@keyframes balloonBurst {
+    from {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translate(var(--dx), var(--dy)) scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* The message. Same handwriting and ink as the birthday message; the
+   border takes the colour of the balloon it came out of. */
+.balloon-note {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 20;
+    /* max-content so its width doesn't depend on where it is placed;
+       script.js measures it before centring it on the balloon. */
+    width: max-content;
+    max-width: min(260px, calc(100vw - 24px));
+    padding: 10px 16px;
+    background: #fff;
+    border: 3px solid #ff6b6b;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    font-family: 'Dancing Script', 'Brush Script MT', 'Comic Sans MS', cursive;
+    font-size: 1.5em;
+    line-height: 1.3;
+    color: #c91515;
+    text-align: center;
+    white-space: pre-line;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    animation: balloonNoteIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.balloon-note.is-leaving {
+    opacity: 0;
+    transform: translateY(-10px);
+    pointer-events: none;
+}
+
+@keyframes balloonNoteIn {
+    from {
+        opacity: 0;
+        transform: scale(0.4);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ---------------------------------------------------------------
+   Confetti cannon (Sprint 3)
+
+   A round button pinned to the bottom corner, on the birthday screen
+   only (hidden until celebrate() in script.js), and one canvas over
+   the whole screen for the confetti itself.
+   --------------------------------------------------------------- */
+
+.cannon {
+    position: fixed;
+    right: 14px;
+    bottom: 14px;
+    /* Over the page and the balloon messages, under the lightbox. */
+    z-index: 30;
+    width: 56px;
+    height: 56px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+    font-size: 1.6em;
+    line-height: 1;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.15s ease;
+}
+
+.cannon[hidden] {
+    display: none;
+}
+
+.cannon:active {
+    transform: scale(0.9);
+}
+
+.cannon:focus-visible {
+    outline: 3px solid #4ecdc4;
+    outline-offset: 3px;
+}
+
+/* The kick as it goes off. */
+.cannon.is-firing {
+    animation: cannonKick 0.35s ease-out;
+}
+
+@keyframes cannonKick {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    30% {
+        transform: scale(0.82) rotate(14deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* The photo has the screen to itself. */
+body.lightbox-open .cannon {
+    display: none;
+}
+
+.cannon-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 40;
+    pointer-events: none;
+}
+
+.cannon-canvas[hidden] {
+    display: none;
+}
+
+/* ---------------------------------------------------------------
+   Falling petals (Sprint 4)
+
+   Pure CSS once script.js has scattered them: each petal gets its own
+   column, size and timing through custom properties. Only transforms
+   are animated, so the phone does this off the main thread. The pinks
+   are taken from flower.png.
+   --------------------------------------------------------------- */
+
+.petals {
+    position: fixed;
+    inset: 0;
+    /* Over the page like the confetti, under messages and the lightbox. */
+    z-index: 2;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* The fall. Sway and spin are on ::before, so the two don't fight over
+   one transform. */
+.petal {
+    position: absolute;
+    top: -30px;
+    left: var(--x);
+    width: var(--size);
+    height: var(--size);
+    animation: petalFall var(--fall) linear var(--delay) infinite;
+    will-change: transform;
+}
+
+.petal::before {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 100% 0 100% 0;
+    background: linear-gradient(135deg, #f8c8c8 0%, #f898a8 100%);
+    opacity: 0.85;
+    animation: petalSway var(--sway-time) ease-in-out var(--delay) infinite alternate;
+}
+
+@keyframes petalFall {
+    to {
+        transform: translateY(calc(100vh + 60px));
+    }
+}
+
+@keyframes petalSway {
+    from {
+        transform: translateX(calc(var(--sway) * -1)) rotate(-45deg);
+    }
+    to {
+        transform: translateX(var(--sway)) rotate(160deg);
+    }
+}
+
+/* Present for screen readers, invisible on screen. */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
 .confetti {
     position: fixed;
     width: 10px;
@@ -245,12 +562,13 @@ h1 {
     }
 }
 
-.confetti:nth-child(5) { left: 20%; animation-delay: 0s; background: #ff6b6b; }
-.confetti:nth-child(6) { left: 40%; animation-delay: 0.5s; background: #4ecdc4; }
-.confetti:nth-child(7) { left: 60%; animation-delay: 1s; background: #ffe66d; }
-.confetti:nth-child(8) { left: 80%; animation-delay: 1.5s; background: #a8e6cf; }
-.confetti:nth-child(9) { left: 30%; animation-delay: 0.8s; background: #667eea; }
-.confetti:nth-child(10) { left: 70%; animation-delay: 1.2s; background: #764ba2; }
+/* The six confetti are the first six children of <body>. */
+.confetti:nth-child(1) { left: 20%; animation-delay: 0s; background: #ff6b6b; }
+.confetti:nth-child(2) { left: 40%; animation-delay: 0.5s; background: #4ecdc4; }
+.confetti:nth-child(3) { left: 60%; animation-delay: 1s; background: #ffe66d; }
+.confetti:nth-child(4) { left: 80%; animation-delay: 1.5s; background: #a8e6cf; }
+.confetti:nth-child(5) { left: 30%; animation-delay: 0.8s; background: #667eea; }
+.confetti:nth-child(6) { left: 70%; animation-delay: 1.2s; background: #764ba2; }
 
 .flower-img {
     width: 100px;
@@ -340,6 +658,71 @@ h1 {
     width: 100%;
     height: 100%;
     object-fit: contain;
+}
+
+/* Tap the husky: it wiggles and a few hearts float up (script.js). The
+   wiggle is on the image, because the wrapper's transform belongs to the
+   bounce above. */
+.husky {
+    cursor: pointer;
+    border-radius: 16px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.husky:focus {
+    outline: none;
+}
+
+.husky:focus-visible {
+    outline: 3px solid #4ecdc4;
+    outline-offset: 4px;
+}
+
+.husky.is-happy img {
+    animation: huskyHappy 0.6s ease-in-out;
+}
+
+@keyframes huskyHappy {
+    0%, 100% {
+        transform: rotate(0deg) scale(1);
+    }
+    20% {
+        transform: rotate(-8deg) scale(1.08);
+    }
+    40% {
+        transform: rotate(8deg) scale(1.1);
+    }
+    60% {
+        transform: rotate(-6deg) scale(1.08);
+    }
+    80% {
+        transform: rotate(4deg) scale(1.04);
+    }
+}
+
+/* Added to <body> at the husky's position, removed when they have faded. */
+.husky-heart {
+    position: absolute;
+    z-index: 20;
+    line-height: 1;
+    pointer-events: none;
+    /* both: stays invisible until its own short delay is up. */
+    animation: huskyHeart 1.3s ease-out both;
+}
+
+@keyframes huskyHeart {
+    0% {
+        transform: translate(0, 0) scale(0.4);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--dx), var(--dy)) scale(1);
+        opacity: 0;
+    }
 }
 
 @keyframes bounce-husky {
@@ -520,6 +903,12 @@ h1 {
     padding: 8px 12px;
     border-radius: 8px;
     margin-bottom: 16px;
+}
+
+/* On the birthday screen the notes stay but their heading goes;
+   celebrate() in script.js adds the class. */
+.daily.is-birthday .daily-heading {
+    display: none;
 }
 
 .daily-list {
@@ -1001,12 +1390,35 @@ body.lightbox-open {
     .tick,
     .lightbox,
     .note-body,
-    .note-badge {
+    .note-badge,
+    .balloon-note,
+    .husky.is-happy img,
+    .husky-heart {
         animation: none !important;
     }
 
     .note-chevron {
         transition: none !important;
+    }
+
+    /* A balloon still pops and comes back, and its message still shows;
+       each just happens at once, with no burst. */
+    .balloon,
+    .balloon-note {
+        transition: none !important;
+    }
+
+    .balloon-burst {
+        display: none !important;
+    }
+
+    /* Nothing but motion, so they go entirely: no petals, and no cannon
+       button, since a button that visibly does nothing is worse than none.
+       The husky still gives its hearts, they just don't float. */
+    .petals,
+    .cannon,
+    .cannon-canvas {
+        display: none !important;
     }
 
     /* Keep the gallery usable, just still. */
